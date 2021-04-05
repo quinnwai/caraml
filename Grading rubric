@@ -1,0 +1,34 @@
+Grading
+ are 100 points in total.
+ 
+##Django and PostgreSQL Setup (10 points)
+Installing Django and its dependencies (5 points)
+Conda environment / PostgreSQL database set up (5 points)
+
+##Data Processing (25 points)
+Users can upload a csv file for the model (10 points)
+Results of the linear model have different display options (15 points)
+
+
+##Models history (10 point)
+User can log-in and store their data (3 points)
+User’s previous results are stored in a history tab (7 points)
+
+
+##User Interaction (25 points)
+Users can choose their own features for the model (10 points)
+Users can specify their train-test split, randomization, etc (10 points)
+Blurbs are shown explaining each step (5 points)
+
+
+##Best Practice (10 points)
+Code is well formatted and easy to read, with proper commenting (3 points)
+Stored passwords are stored salted and hashed (2 points)
+All requests that either contain sensitive information or modify something on the server are performed via POST, not GET (3 points)
+Page passes the W3C validator (2 points)
+
+
+##Usability (5 Points)
+Site is intuitive to use and navigate (4 points)
+Site is visually appealing (1 point)
+Creative portion (15 points)
