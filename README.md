@@ -22,3 +22,5 @@ QUINN WAI WONG --- 475704 --- quinnwai
    * 3: Code is readable and well formatted
    * 2: All pages pass the html validator
 5. Creative portion (10 points)
+
+*Approved by: Sam Winiarski on April 5, 2021*
