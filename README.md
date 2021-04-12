@@ -6,7 +6,7 @@ VISHAL AGARWAL --- 488422 --- avishal-cyber
 QUINN WAI WONG --- 475704 --- quinnwai
 
 ## Project name
-caraml - Creating a regression aided by machine learning
+CARAML - Creating a regression aided by machine learning
 
 ## Rubric
 1. Rubric turned in on time (5 points)
