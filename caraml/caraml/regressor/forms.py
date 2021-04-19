@@ -2,16 +2,13 @@ from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
-DEMO_CHOICES = (
-    ("1", "Naveen"),
-    ("2", "Pranav"),
-    ("3", "Isha"),
-    ("4", "Saloni"),
-)
-
+features = ["car", "train", "plane", "universe", "time"]
+choices = []
+for i in range(len(features)):
+    choices.append((i, features[i]))
 
 class FeaturesForm(forms.Form):
-    choose = forms.MultipleChoiceField(choices=DEMO_CHOICES, 
+    choose = forms.MultipleChoiceField(choices=choices, 
     widget=forms.CheckboxSelectMultiple,)
     your_name = forms.CharField(label='Your name', max_length=100)
 
