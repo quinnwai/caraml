@@ -56,7 +56,6 @@ def ResultsView(request):
                                     "Generosity", "Perceptions of corruption"] # TODO: note exclusion of string variables for now
         request.session['target'] = "Score"
         request.session['title'] = "testing testing"
-        request.session['testSize'] = 0.8
         request.session['randomState'] = 4 # for reproducible output
         request.session['numFolds'] = 10
 
@@ -82,17 +81,17 @@ def ResultsView(request):
 
         # check all variables are not null before proceeding
 
-        if(not features and not target and not testSize and not randomState and not numFolds):
+        if(not features and not target and not randomState and not numFolds):
             return HttpResponse("Invalid page access. Please return to a different page") # TODO: return to previous page with message
 
-        result = getResults(dataset.file.path, features, target, testSize, randomState, numFolds)
+        result = getResults(dataset.file.path, features, target, randomState, numFolds)
         
         return HttpResponse(f'average score of {result}')
         # return render(request, 'regressor/results.html')
     # return render(request, 'regressor/results.html') 
     # TODO: cover case of not get request?
 
-def getResults(filePath, features, target, testSize, randomState, numFolds):
+def getResults(filePath, features, target, randomState, numFolds):
     ##### data preprocessing #####
     # create pandas dataframe
     data = pd.read_csv(filePath)
