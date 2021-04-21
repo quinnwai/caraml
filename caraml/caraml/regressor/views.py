@@ -30,22 +30,22 @@ def UploadDatasetView(request):
             data = pd.read_csv(dataset.file.path)
             request.session['title'] = dataset.title
             request.session['allFeatures'] = list(data.columns)
-            
-            return HttpResponseRedirect('/feature') # TODO: change this to redirect to features page
+            return HttpResponseRedirect('/feature', {"features": list(data.columns)})
     else:
         form = UploadDatasetForm()
-    return render(request, 'regressor/upload-dataset.html', {'form': form})
+    return render(request, 'regressor/upload-dataset.html', {'form': form})        
 
-
-class ChooseFeatures (FormView):
-    template_name = 'pages/feature_form.html'
-    form_class = FeaturesForm
-
-    # overriding form_valid to provide redirect link
-    def form_valid(self, form):
-        df = form.save()
-        df.save()
-        return redirect('home')
+def ChooseFeaturesView(request):
+    if request.method == 'POST':
+        form = FeaturesForm(request, request.POST) 
+        if form.is_valid():
+            if not request.session.get('featureFormData'):
+                request.session['featureFormData'] = [] #changing featureFormData to hold data from this submission
+            request.session['featureFormData'] = form.cleaned_data['featureFormData']
+            return redirect('home') #TODO: Change redirect to the new form that you're gonna create
+    else:
+        form = FeaturesForm(request=request)  # rendering form as usual from features
+        return render(request, 'pages/feature_form.html', {'form': form})
 
 def ResultsView(request):
     # on page load

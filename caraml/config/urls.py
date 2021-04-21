@@ -21,7 +21,7 @@ urlpatterns = [
     path("upload-dataset/", views.UploadDatasetView, name="upload-dataset"),
     path(
         "feature/",
-        views.ChooseFeatures.as_view(),
+        views.ChooseFeaturesView,
         name="feature"
     ),
     path("results/", views.ResultsView, name="results"),
