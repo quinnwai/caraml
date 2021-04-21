@@ -6,6 +6,7 @@ from crispy_forms.layout import Submit
 from django.forms import ModelForm
 from django.http import request
 from caraml.regressor.models import Dataset
+import copy
 
 class UploadDatasetForm(ModelForm):
     class Meta:
@@ -81,30 +82,28 @@ class FeaturesForm(forms.Form):
         self.helper.field_class = 'col-lg-8'
         self.helper.add_input(Submit('submit', 'Submit'))
 
-# class SpecificationsForm(forms.Form):
+class SpecificationsForm(forms.Form):
 
-#     def __init__(self, request, *args, **kwargs):
-#         super(SpecificationsForm, self).__init__(*args, **kwargs)
-#         request.session["allTargets"] = getTargetOpts(request.session["allFeatures"],
-#                           request.session["features"])
-#         self.fields["randomState"] = forms.IntegerField(
-#             choices=options(request.session["allTargets"]),
-#             widget=forms.RadioSelect,)
+    def __init__(self, request, *args, **kwargs):
+        super(SpecificationsForm, self).__init__(*args, **kwargs)
+        self.fields["randomState"] = forms.IntegerField()
+        self.fields["nFolds"] = forms.IntegerField()
 
-#         # defined so that crispy forms front-end is simple
-#         self.helper = FormHelper(self)
+        # defined so that crispy forms front-end is simple
+        self.helper = FormHelper(self)
 
-#         # specifying FORMatting... hah fun times
-#         self.helper.form_method = 'post'
-#         self.helper.form_class = 'form-horizontal'
-#         self.helper.label_class = 'col-lg-2'
-#         self.helper.field_class = 'col-lg-8'
-#         self.helper.add_input(Submit('submit', 'Submit'))
+        # specifying FORMatting... hah fun times
+        self.helper.form_method = 'post'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-lg-2'
+        self.helper.field_class = 'col-lg-8'
+        self.helper.add_input(Submit('submit', 'Submit'))
 
 def getTargetOpts(allFeatures, features):
+    allTargets = copy.deepcopy(allFeatures)
     for i in reversed(features):
-        del allFeatures[int(i)]
-    return allFeatures
+        del allTargets[int(i)]
+    return allTargets
 
 def options(features):
     choices = []

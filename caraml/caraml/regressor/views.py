@@ -9,7 +9,7 @@ from sklearn.model_selection import KFold
 from sklearn.linear_model import LinearRegression
 ##
 
-from caraml.regressor.forms import FeaturesForm, TargetForm, UploadDatasetForm
+from caraml.regressor.forms import FeaturesForm, TargetForm, UploadDatasetForm, SpecificationsForm
 from caraml.regressor.models import Dataset
 
 def UploadDatasetView(request):
@@ -45,7 +45,7 @@ def ChooseFeaturesView(request):
             return redirect('/target') #TODO: Change redirect to the new form that you're gonna create
     else:
         form = FeaturesForm(request=request)  # rendering form as usual from features
-        return render(request, 'pages/feature_form.html', {'form': form})
+        return render(request, 'regressor/forms/feature_form.html', {'form': form})
 
 
 def ChooseTargetView(request):
@@ -55,32 +55,48 @@ def ChooseTargetView(request):
             if not request.session.get('target'):
                 request.session['target'] = []  # changing featureFormData to hold data from this submission
             request.session['target'] = form.cleaned_data['target']
-            return redirect('regressor/results.html')  # TODO: Change redirect to the new form that you're gonna create
+            return redirect('/specifications')
     else:
         form = TargetForm(request=request)  # rendering form as usual from features
-        return render(request, 'pages/target_form.html', {'form': form})
+        return render(request, 'regressor/forms/target_form.html', {'form': form})
+
+
+def ChooseSpecificationsView(request):
+    if request.method == 'POST':
+        form = SpecificationsForm(request, request.POST)
+        if form.is_valid():
+            if not request.session.get('specifications'):
+                request.session['specifications'] = []  # changing featureFormData to hold data from this submission
+            request.session['randomState'] = form.cleaned_data['randomState']
+            request.session['numFolds'] = form.cleaned_data['nFolds']
+            return redirect('/results')  # TODO: Change redirect to the new form that you're gonna create
+    else:
+        form = SpecificationsForm(request=request)  # rendering form as usual from features
+        return render(request, 'regressor/forms/specifications_form.html', {'form': form})
 
 def ResultsView(request):
     # on page load
     if request.method == 'GET':
 
         # hardcoded examples (TODO: get rid after connecting to Vishal's work)
-        request.session['features'] = ["GDP per capita", "Social support", "Healthy life expectancy", "Freedom to make life choices",
-                                    "Generosity", "Perceptions of corruption"] # TODO: note exclusion of string variables for now
-        request.session['target'] = "Score"
-        request.session['title'] = "testing testing"
-        request.session['randomState'] = 4 # for reproducible output
-        request.session['numFolds'] = 10
+        # request.session['features'] = ["GDP per capita", "Social support", "Healthy life expectancy", "Freedom to make life choices",
+                                    # "Generosity", "Perceptions of corruption"] # TODO: note exclusion of string variables for now
+        # request.session['target'] = "Score"
+        # request.session['title'] = "testing testing"
+        # request.session['randomState'] = 4 # for reproducible output
+        # request.session['numFolds'] = 10
+        allFeatures = request.session["allFeatures"]
+        features = []
+        #append strings to list of features
+        for i in request.session["features"]:
+            features.append(allFeatures[int(i)])
 
-        # get all variables needed
-        features = request.session.get('features', None)
-        target = request.session.get('target', None) # assuming sent as target 
-        title = request.session.get('title', None)
-        testSize = request.session.get('testSize', None)
-        randomState = request.session.get('randomState', None)
-        numFolds = request.session.get('numFolds', None)
-
-
+        allTargets = request.session["allTargets"]
+        #get target from location in allTargets
+        target = allTargets[int(request.session["target"])]
+        title = request.session["title"]
+        randomState = request.session["randomState"]
+        numFolds = request.session["numFolds"]
 
         # get specific dataset by name
         if(not title):

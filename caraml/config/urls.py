@@ -19,16 +19,9 @@ urlpatterns = [
 
     # Your stuff: custom urls includes go here
     path("upload-dataset/", views.UploadDatasetView, name="upload-dataset"),
-    path(
-        "feature/",
-        views.ChooseFeaturesView,
-        name="feature"
-    ),
-    path(
-        "target/",
-        views.ChooseTargetView,
-        name="target"
-    ),
+    path( "feature/", views.ChooseFeaturesView, name="feature"),
+    path("target/", views.ChooseTargetView, name="target"),
+    path("specifications/", views.ChooseSpecificationsView, name="specifications"),
     path("results/", views.ResultsView, name="results"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
