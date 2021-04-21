@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}
+Choose features
+{% endblock %}
+
+{% block header %}
+<h1>Choose your own features</h1>
+<p class="lead">Choose the Target you want for the regressor</p>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% load crispy_forms_tags %}
+    <!-- line below takes all data from FormHelper if FormHelper is named -->
+    {% crispy form %}
+</div>
+{% endblock %}

@@ -29,10 +29,9 @@ class FeaturesForm(forms.Form):
 
     def __init__(self, request, *args, **kwargs):
         super(FeaturesForm, self).__init__(*args, **kwargs)
-        self.fields["choose"] = forms.MultipleChoiceField(
-        choices=options(request=request),
+        self.fields["features"] = forms.MultipleChoiceField(
+        choices=options(request.session["allFeatures"]),
         widget=forms.CheckboxSelectMultiple,)
-        self.fields["name"] = forms.CharField(label='Your name', max_length=100)
 
         # defined so that crispy forms front-end is simple
         self.helper = FormHelper(self)
@@ -44,9 +43,70 @@ class FeaturesForm(forms.Form):
         self.helper.field_class = 'col-lg-8'
         self.helper.add_input(Submit('submit', 'Submit'))
 
+class TargetForm(forms.Form):
 
-def options(request):
-    features = request.session["allFeatures"]
+    def __init__(self, request, *args, **kwargs):
+        super(TargetForm, self).__init__(*args, **kwargs)
+        request.session["allTargets"] = getTargetOpts(request.session["allFeatures"],
+                          request.session["features"])
+        self.fields["target"] = forms.ChoiceField(
+            choices=options(request.session["allTargets"]),
+            widget=forms.RadioSelect,)
+
+        # defined so that crispy forms front-end is simple
+        self.helper = FormHelper(self)
+
+        # specifying FORMatting... hah fun times
+        self.helper.form_method = 'post'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-lg-2'
+        self.helper.field_class = 'col-lg-8'
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+class FeaturesForm(forms.Form):
+
+    def __init__(self, request, *args, **kwargs):
+        super(FeaturesForm, self).__init__(*args, **kwargs)
+        self.fields["features"] = forms.MultipleChoiceField(
+        choices=options(request.session["allFeatures"]),
+        widget=forms.CheckboxSelectMultiple,)
+
+        # defined so that crispy forms front-end is simple
+        self.helper = FormHelper(self)
+
+        # specifying FORMatting... hah fun times
+        self.helper.form_method = 'post'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-lg-2'
+        self.helper.field_class = 'col-lg-8'
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+# class SpecificationsForm(forms.Form):
+
+#     def __init__(self, request, *args, **kwargs):
+#         super(SpecificationsForm, self).__init__(*args, **kwargs)
+#         request.session["allTargets"] = getTargetOpts(request.session["allFeatures"],
+#                           request.session["features"])
+#         self.fields["randomState"] = forms.IntegerField(
+#             choices=options(request.session["allTargets"]),
+#             widget=forms.RadioSelect,)
+
+#         # defined so that crispy forms front-end is simple
+#         self.helper = FormHelper(self)
+
+#         # specifying FORMatting... hah fun times
+#         self.helper.form_method = 'post'
+#         self.helper.form_class = 'form-horizontal'
+#         self.helper.label_class = 'col-lg-2'
+#         self.helper.field_class = 'col-lg-8'
+#         self.helper.add_input(Submit('submit', 'Submit'))
+
+def getTargetOpts(allFeatures, features):
+    for i in reversed(features):
+        del allFeatures[int(i)]
+    return allFeatures
+
+def options(features):
     choices = []
     for i in range(len(features)):
         choices.append((i, features[i]))

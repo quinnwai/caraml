@@ -24,6 +24,11 @@ urlpatterns = [
         views.ChooseFeaturesView,
         name="feature"
     ),
+    path(
+        "target/",
+        views.ChooseTargetView,
+        name="target"
+    ),
     path("results/", views.ResultsView, name="results"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

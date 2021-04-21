@@ -9,7 +9,7 @@ from sklearn.model_selection import KFold
 from sklearn.linear_model import LinearRegression
 ##
 
-from caraml.regressor.forms import FeaturesForm, UploadDatasetForm
+from caraml.regressor.forms import FeaturesForm, TargetForm, UploadDatasetForm
 from caraml.regressor.models import Dataset
 
 def UploadDatasetView(request):
@@ -39,13 +39,26 @@ def ChooseFeaturesView(request):
     if request.method == 'POST':
         form = FeaturesForm(request, request.POST) 
         if form.is_valid():
-            if not request.session.get('featureFormData'):
-                request.session['featureFormData'] = [] #changing featureFormData to hold data from this submission
-            request.session['featureFormData'] = form.cleaned_data['featureFormData']
-            return redirect('home') #TODO: Change redirect to the new form that you're gonna create
+            if not request.session.get('features'):
+                request.session['features'] = []  # changing featureFormData to hold data from this submission
+            request.session['features'] = form.cleaned_data['features']
+            return redirect('/target') #TODO: Change redirect to the new form that you're gonna create
     else:
         form = FeaturesForm(request=request)  # rendering form as usual from features
         return render(request, 'pages/feature_form.html', {'form': form})
+
+
+def ChooseTargetView(request):
+    if request.method == 'POST':
+        form = TargetForm(request, request.POST)
+        if form.is_valid():
+            if not request.session.get('target'):
+                request.session['target'] = []  # changing featureFormData to hold data from this submission
+            request.session['target'] = form.cleaned_data['target']
+            return redirect('regressor/results.html')  # TODO: Change redirect to the new form that you're gonna create
+    else:
+        form = TargetForm(request=request)  # rendering form as usual from features
+        return render(request, 'pages/target_form.html', {'form': form})
 
 def ResultsView(request):
     # on page load
