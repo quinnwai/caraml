@@ -30,7 +30,7 @@ def UploadDatasetView(request):
             data = pd.read_csv(dataset.file.path)
             request.session['title'] = dataset.title
             request.session['allFeatures'] = list(data.columns)
-            return HttpResponseRedirect('/feature', {"features": list(data.columns)})
+            return HttpResponseRedirect('/feature')
     else:
         form = UploadDatasetForm()
     return render(request, 'regressor/upload-dataset.html', {'form': form})        
