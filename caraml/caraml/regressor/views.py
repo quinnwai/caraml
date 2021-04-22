@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.views.generic.edit import FormView
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
-from . models import Records
+from . models import Record, Dataset
 
 ## calculation-specific imports
 import pandas as pd
@@ -13,14 +13,12 @@ from sklearn.linear_model import LinearRegression
 ##
 
 from caraml.regressor.forms import FeaturesForm, TargetForm, UploadDatasetForm, SpecificationsForm
-from caraml.regressor.models import Dataset, Records
-
 
 class RecordsListView(ListView):
     template_name = 'users/records.html'
 
     def get_queryset(self):
-        RecordsList = Records.objects.all().filter(user = self.request.user)
+        RecordsList = Record.objects.all().filter(user = self.request.user)
         # print("user")
         # print(User)
         # print(User.objects)

@@ -10,7 +10,7 @@ class Dataset(models.Model):
     # def extension(self):
     #     name, extension = os.path.splitext(self.file.name)
     #     return extension
-class Records(models.Model):
+class Record(models.Model):
     title = models.CharField(max_length=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     dateTime = models.DateTimeField()
