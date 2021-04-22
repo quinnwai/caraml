@@ -10,3 +10,11 @@ class Dataset(models.Model):
     # def extension(self):
     #     name, extension = os.path.splitext(self.file.name)
     #     return extension
+class Records(models.Model):
+    title = models.CharField(max_length=100)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    dateTime = models.DateTimeField()
+    randomState = models.PositiveIntegerField()
+    numFolds = models.PositiveIntegerField()
+    target = models.CharField(max_length=100)
+    result = models.DecimalField(decimal_places=3, max_digits=6)

@@ -1,7 +1,10 @@
+from caraml.users.views import User
 from django.http import HttpResponseRedirect,HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic.edit import FormView
 from django.views.generic.base import TemplateView
+from django.views.generic.list import ListView
+from . models import Records
 
 ## calculation-specific imports
 import pandas as pd
@@ -10,7 +13,22 @@ from sklearn.linear_model import LinearRegression
 ##
 
 from caraml.regressor.forms import FeaturesForm, TargetForm, UploadDatasetForm, SpecificationsForm
-from caraml.regressor.models import Dataset
+from caraml.regressor.models import Dataset, Records
+
+
+class RecordsListView(ListView):
+    template_name = 'users/records.html'
+
+    def get_queryset(self):
+        RecordsList = Records.objects.all().filter(user = self.request.user)
+        # print("user")
+        # print(User)
+        # print(User.objects)
+        return RecordsList
+
+    def get_context_data(self, **kwargs):
+        context = super(RecordsListView, self).get_context_data(**kwargs)
+        return context
 
 def UploadDatasetView(request):
     if request.method == 'POST':
