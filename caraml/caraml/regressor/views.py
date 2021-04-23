@@ -130,6 +130,14 @@ def ResultsView(request):
             return HttpResponse("Invalid page access. Please return to a different page") # TODO: return to previous page with message
 
         result = getResults(dataset.file.path, features, target, randomState, numFolds)
+
+        Record.objects.create(
+            title=title,
+            user=request.user,
+            randomState=randomState,
+            numFolds=numFolds,
+            target=target,
+            result=result)
         
         return HttpResponse(f'average score of {result}')
         # return render(request, 'regressor/results.html')
