@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} Records of {{ object.username }}{% endblock %}
+
+{% block content %}
+{% if object_list%}
+    <table class="table" id="drug-list-table">
+        <tr>
+            <th>Title</th>
+            <th>Date and Time</th>
+            <th>Random State</th>
+            <th>Number of folds</th>
+            <th>Target </th>
+            <th>Result</th>
+            <th></th>
+        </tr>
+    {%for record in object_list%}
+<tr>
+    <td>{{record.title}}</td>
+    <td>{{record.dateTime}}</td>
+    <td>{{record.randomState}}</td>
+    <td>{{record.numFolds}}</td>
+    <td>{{record.target}}</td>
+    <td>{{record.result}}%</td>
+</tr>
+    {% endfor %}
+</table>
+{%else%}
+<div>
+    <h1> Sorry, no records to show.
+         Looks like you have never ran a regressor on caraML before </h1>
+</div>
+{%endif%}
+{% endblock content %}

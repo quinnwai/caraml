@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views import defaults as default_views
 from django.views.generic import TemplateView
+from caraml.regressor import views
 
 urlpatterns = [
     path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
@@ -15,7 +16,15 @@ urlpatterns = [
     # User management
     path("users/", include("caraml.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
+
     # Your stuff: custom urls includes go here
+    path("upload-dataset/", views.UploadDatasetView, name="upload-dataset"),
+    path( "feature/", views.ChooseFeaturesView, name="feature"),
+    path("target/", views.ChooseTargetView, name="target"),
+    path("specifications/", views.ChooseSpecificationsView, name="specifications"),
+    path("results/", views.ResultsView, name="results"),
+
+    path("records/", views.RecordsListView.as_view(), name = "records")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

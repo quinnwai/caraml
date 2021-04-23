@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}
+Upload Dataset
+{% endblock %}
+
+{% block header %}
+<h1>Upload Dataset</h1>
+<p class="lead">Upload the dataset you want to create a model for</p>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% load crispy_forms_tags %}
+    <!-- line below takes all data from FormHelper if FormHelper is named -->
+    {% crispy form %}
+</div>
+{% endblock %}
