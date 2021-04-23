@@ -47,10 +47,13 @@ def UploadDatasetView(request):
             data = pd.read_csv(dataset.file.path)
             request.session['title'] = dataset.title
             request.session['allFeatures'] = list(data.columns)
-            return HttpResponseRedirect('/feature')
+            return HttpResponseRedirect('/visualization')
     else:
         form = UploadDatasetForm()
-    return render(request, 'regressor/upload-dataset.html', {'form': form})        
+    return render(request, 'regressor/upload-dataset.html', {'form': form})   
+
+def FeatureVisualizationView(request):
+    return render(request, 'regressor/feature-visualization.html')
 
 def ChooseFeaturesView(request):
     if request.method == 'POST':
@@ -59,7 +62,7 @@ def ChooseFeaturesView(request):
             if not request.session.get('features'):
                 request.session['features'] = []  # changing featureFormData to hold data from this submission
             request.session['features'] = form.cleaned_data['features']
-            return redirect('/target') #TODO: Change redirect to the new form that you're gonna create
+            return HttpResponseRedirect('/target') #TODO: Change redirect to the new form that you're gonna create
     else:
         form = FeaturesForm(request=request)  # rendering form as usual from features
         return render(request, 'regressor/forms/feature_form.html', {'form': form})
@@ -72,7 +75,7 @@ def ChooseTargetView(request):
             if not request.session.get('target'):
                 request.session['target'] = []  # changing featureFormData to hold data from this submission
             request.session['target'] = form.cleaned_data['target']
-            return redirect('/specifications')
+            return HttpResponseRedirect('/specifications')
     else:
         form = TargetForm(request=request)  # rendering form as usual from features
         return render(request, 'regressor/forms/target_form.html', {'form': form})
@@ -86,7 +89,7 @@ def ChooseSpecificationsView(request):
                 request.session['specifications'] = []  # changing featureFormData to hold data from this submission
             request.session['randomState'] = form.cleaned_data['randomState']
             request.session['numFolds'] = form.cleaned_data['nFolds']
-            return redirect('/results')  # TODO: Change redirect to the new form that you're gonna create
+            return HttpResponseRedirect('/results')  # TODO: Change redirect to the new form that you're gonna create
     else:
         form = SpecificationsForm(request=request)  # rendering form as usual from features
         return render(request, 'regressor/forms/specifications_form.html', {'form': form})
