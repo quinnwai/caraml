@@ -18,4 +18,4 @@ class Record(models.Model):
     randomState = models.PositiveIntegerField()
     numFolds = models.PositiveIntegerField()
     target = models.CharField(max_length=100)
-    result = models.DecimalField(decimal_places=3, max_digits=6)
+    result = models.DecimalField(decimal_places=2, max_digits=4)

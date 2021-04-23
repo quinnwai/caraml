@@ -137,7 +137,7 @@ def ResultsView(request):
             randomState=randomState,
             numFolds=numFolds,
             target=target,
-            result=result)
+            result=(result*100))
         
         return HttpResponse(f'average score of {result}')
         # return render(request, 'regressor/results.html')
