@@ -61,8 +61,6 @@ def ChooseFeaturesView(request):
             request.session['features'] = form.cleaned_data['features']
             return HttpResponseRedirect('/specifications') #TODO: Change redirect to the new form that you're gonna create
     else:
-        print(request.session["allTargets"])
-        print(request.session["target"])
         form = FeaturesForm(request=request)  # rendering form as usual from features
         return render(request, 'regressor/forms/feature_form.html', {'form': form})
 
@@ -138,6 +136,7 @@ def ResultsView(request):
             randomState=randomState,
             numFolds=numFolds,
             target=target,
+            features = features,
             result=(result*100))
 
         # delete dataset file and instance

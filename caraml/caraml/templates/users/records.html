@@ -5,12 +5,14 @@
 
 {% block content %}
 {% if object_list%}
+
     <table class="table" id="drug-list-table">
         <tr>
             <th>Title</th>
             <th>Date and Time</th>
             <th>Random State</th>
             <th>Number of folds</th>
+            <th>Features</th>
             <th>Target </th>
             <th>Result</th>
             <th></th>
@@ -21,6 +23,7 @@
     <td>{{record.dateTime}}</td>
     <td>{{record.randomState}}</td>
     <td>{{record.numFolds}}</td>
+    <td>{{record.features}}</td>
     <td>{{record.target}}</td>
     <td>{{record.result}}%</td>
 </tr>
