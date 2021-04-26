@@ -15,15 +15,15 @@ CaraML - Creating a regression aided by machine learning
    * 5: Learned/used PostgreSQL database
 3. Functionality (55 points)
    * 10: Users can upload a csv file for the model (10 points)
-   * 10: Results of the linear model have different display options (10 points)
-   * 3: User can log-in and store their data (3 points)
-   * 7: User’s previous results are stored in a history tab (7 points)
-   * 10: Users can choose their own features for the model (10 points)
-   * 10: Users can specify their train-test split, randomization, etc (10 points)
+   * 10: Users can visualize their data to select features (10 points)
+   * 10: Users can choose their own features and target for the model (10 points)
+   * 5: Users can specify their train-test split, randomization, etc (5 points)
+   * 10: Results of the linear model are calculated and displayed (10 points)
+   * 5: User’s previous results are stored in a history tab (5 points)
    * 5: Blurbs are shown explaining each step (5 points)
 4. Best Practices (5 points)
    * 3: Code is readable and well formatted
    * 2: All pages pass the html validator
 5. Creative portion (10 points)
 
-*Approved by: Sam Winiarski on April 5, 2021*
+*Approved by: Todd Sproull on April 26, 2021*
