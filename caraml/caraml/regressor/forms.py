@@ -30,8 +30,9 @@ class FeaturesForm(forms.Form):
 
     def __init__(self, request, *args, **kwargs):
         super(FeaturesForm, self).__init__(*args, **kwargs)
+        request.session["allFeatures"] = getFeatureOpts(request.session["allTargets"], request.session["target"])
         self.fields["features"] = forms.MultipleChoiceField(
-        choices=options(request.session["allFeatures"]),
+            choices=options(request.session["allFeatures"]),
         widget=forms.CheckboxSelectMultiple,)
 
         # defined so that crispy forms front-end is simple
@@ -48,29 +49,10 @@ class TargetForm(forms.Form):
 
     def __init__(self, request, *args, **kwargs):
         super(TargetForm, self).__init__(*args, **kwargs)
-        request.session["allTargets"] = getTargetOpts(request.session["allFeatures"],
-                          request.session["features"])
+        #request.session["allTargets"] = options(request.session["allTargets"])
         self.fields["target"] = forms.ChoiceField(
             choices=options(request.session["allTargets"]),
             widget=forms.RadioSelect,)
-
-        # defined so that crispy forms front-end is simple
-        self.helper = FormHelper(self)
-
-        # specifying FORMatting... hah fun times
-        self.helper.form_method = 'post'
-        self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-lg-2'
-        self.helper.field_class = 'col-lg-8'
-        self.helper.add_input(Submit('submit', 'Submit'))
-
-class FeaturesForm(forms.Form):
-
-    def __init__(self, request, *args, **kwargs):
-        super(FeaturesForm, self).__init__(*args, **kwargs)
-        self.fields["features"] = forms.MultipleChoiceField(
-        choices=options(request.session["allFeatures"]),
-        widget=forms.CheckboxSelectMultiple,)
 
         # defined so that crispy forms front-end is simple
         self.helper = FormHelper(self)
@@ -99,11 +81,10 @@ class SpecificationsForm(forms.Form):
         self.helper.field_class = 'col-lg-8'
         self.helper.add_input(Submit('submit', 'Submit'))
 
-def getTargetOpts(allFeatures, features):
-    allTargets = copy.deepcopy(allFeatures)
-    for i in reversed(features):
-        del allTargets[int(i)]
-    return allTargets
+def getFeatureOpts(allTargets, target):
+    allFeatures = copy.deepcopy(allTargets)
+    del allFeatures[int(target)]
+    return allFeatures
 
 def options(features):
     choices = []
