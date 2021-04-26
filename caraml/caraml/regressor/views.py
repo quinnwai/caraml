@@ -5,6 +5,7 @@ from django.views.generic.edit import FormView
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
 from . models import Record, Dataset
+import os
 
 ## calculation-specific imports
 import pandas as pd
@@ -46,10 +47,13 @@ def UploadDatasetView(request):
             data = pd.read_csv(dataset.file.path)
             request.session['title'] = dataset.title
             request.session['allFeatures'] = list(data.columns)
-            return HttpResponseRedirect('/feature')
+            return HttpResponseRedirect('/visualization')
     else:
         form = UploadDatasetForm()
-    return render(request, 'regressor/upload-dataset.html', {'form': form})        
+    return render(request, 'regressor/upload-dataset.html', {'form': form})   
+
+def FeatureVisualizationView(request):
+    return render(request, 'regressor/feature-visualization.html')
 
 def ChooseFeaturesView(request):
     if request.method == 'POST':
@@ -58,7 +62,7 @@ def ChooseFeaturesView(request):
             if not request.session.get('features'):
                 request.session['features'] = []  # changing featureFormData to hold data from this submission
             request.session['features'] = form.cleaned_data['features']
-            return redirect('/target') #TODO: Change redirect to the new form that you're gonna create
+            return HttpResponseRedirect('/target') #TODO: Change redirect to the new form that you're gonna create
     else:
         form = FeaturesForm(request=request)  # rendering form as usual from features
         return render(request, 'regressor/forms/feature_form.html', {'form': form})
@@ -71,7 +75,7 @@ def ChooseTargetView(request):
             if not request.session.get('target'):
                 request.session['target'] = []  # changing featureFormData to hold data from this submission
             request.session['target'] = form.cleaned_data['target']
-            return redirect('/specifications')
+            return HttpResponseRedirect('/specifications')
     else:
         form = TargetForm(request=request)  # rendering form as usual from features
         return render(request, 'regressor/forms/target_form.html', {'form': form})
@@ -85,7 +89,7 @@ def ChooseSpecificationsView(request):
                 request.session['specifications'] = []  # changing featureFormData to hold data from this submission
             request.session['randomState'] = form.cleaned_data['randomState']
             request.session['numFolds'] = form.cleaned_data['nFolds']
-            return redirect('/results')  # TODO: Change redirect to the new form that you're gonna create
+            return HttpResponseRedirect('/results')  # TODO: Change redirect to the new form that you're gonna create
     else:
         form = SpecificationsForm(request=request)  # rendering form as usual from features
         return render(request, 'regressor/forms/specifications_form.html', {'form': form})
@@ -94,21 +98,16 @@ def ResultsView(request):
     # on page load
     if request.method == 'GET':
 
-        # hardcoded examples (TODO: get rid after connecting to Vishal's work)
-        # request.session['features'] = ["GDP per capita", "Social support", "Healthy life expectancy", "Freedom to make life choices",
-                                    # "Generosity", "Perceptions of corruption"] # TODO: note exclusion of string variables for now
-        # request.session['target'] = "Score"
-        # request.session['title'] = "testing testing"
-        # request.session['randomState'] = 4 # for reproducible output
-        # request.session['numFolds'] = 10
+        # get all possible feature and targets from session
         allFeatures = request.session["allFeatures"]
+        allTargets = request.session["allTargets"]
         features = []
-        #append strings to list of features
+
+        # append strings to list of features
         for i in request.session["features"]:
             features.append(allFeatures[int(i)])
 
-        allTargets = request.session["allTargets"]
-        #get target from location in allTargets
+        # get target from location in allTargets
         target = allTargets[int(request.session["target"])]
         title = request.session["title"]
         randomState = request.session["randomState"]
@@ -119,6 +118,7 @@ def ResultsView(request):
             return HttpResponse("Invalid page access. Please return to a different page") # TODO: return to previous page with message
         
         dataset = Dataset.objects.get(title=request.session['title'])
+        path = dataset.file.path
 
         # ensure user inserted this dataset
         if(dataset.user != request.user):
@@ -129,8 +129,10 @@ def ResultsView(request):
         if(not features and not target and not randomState and not numFolds):
             return HttpResponse("Invalid page access. Please return to a different page") # TODO: return to previous page with message
 
-        result = getResults(dataset.file.path, features, target, randomState, numFolds)
+        # get result to print out (training and testing)
+        result = getResults(path, features, target, randomState, numFolds)
 
+        # create new Record object from parameters
         Record.objects.create(
             title=title,
             user=request.user,
@@ -138,11 +140,24 @@ def ResultsView(request):
             numFolds=numFolds,
             target=target,
             result=(result*100))
+
+        # delete dataset file and instance
+        if(os.path.exists(path)):
+            os.remove(path)
+        dataset.delete()
+
+        # get rid of all session variables
+        keys = list(request.session.keys())
+        for key in keys:
+            if key[0]!='_':
+                del request.session[key]
+
+        context = {
+        'result': round(result*100, 2)
+        }
         
-        return HttpResponse(f'average score of {result}')
-        # return render(request, 'regressor/results.html')
-    # return render(request, 'regressor/results.html') 
-    # TODO: cover case of not get request?
+        # return HttpResponse(f'average score of {result}')
+        return render(request, 'regressor/results.html', context)
 
 def getResults(filePath, features, target, randomState, numFolds):
     ##### data preprocessing #####
