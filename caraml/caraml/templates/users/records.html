@@ -5,8 +5,52 @@
 
 {% block content %}
 {% if object_list%}
+{%for record in object_list%}
+<div class="accordion" id="accordionExample">
+  <div class="accordion-item">
+    <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapse{{forloop.counter}}" aria-expanded="false" aria-controls="collapse{{forloop.counter}}">
+            {{ record.title }}
+        </button>
+    </h2>
+    </div>
+    <div id="collapse{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="heading{{forloop.counter}}"
+        data-bs-parent="#accordionExample">
+        <div class="accordion-body">
+            <table class="table">
+                <tr>
+                    <td>Date and Time</td>
+                    <td>{{record.dateTime}} </td>
+                </tr>
+                <tr>
+                    <td>Random State</td>
+                    <td>{{record.randomState}} </td>
+                </tr>
+                    
+                    <td>Number of folds</td>
+                    <td>{{record.numFolds}} </td>
+            </tr>
+            <tr>
+                <td>Features</td>
+                <td>{{record.features}} </td>
+            </tr>
+                <tr>
+                    <td>Target</td>
+                    <td>{{record.target}} </td>
+                </tr>    
+                <tr>
+                    <td>Result</td>
+                    <td>{{record.result}} </td>
+                </tr>
+        </table>
+        </div>
+    </div>
+    {% endfor %}
+</div>
 
-    <table class="table" id="drug-list-table">
+
+    <!-- <table class="table" id="drug-list-table">
         <tr>
             <th>Title</th>
             <th>Date and Time</th>
@@ -20,15 +64,15 @@
     {%for record in object_list%}
 <tr>
     <td>{{record.title}}</td>
-    <td>{{record.dateTime}}</td>
-    <td>{{record.randomState}}</td>
-    <td>{{record.numFolds}}</td>
-    <td>{{record.features}}</td>
+    <td></td>
+    <td>}</td>
+    <td></td>
+    <td></td>
     <td>{{record.target}}</td>
     <td>{{record.result}}%</td>
 </tr>
     {% endfor %}
-</table>
+</table> -->
 {%else%}
 <div>
     <h1> Sorry, no records to show.
