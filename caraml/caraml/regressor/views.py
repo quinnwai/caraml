@@ -19,14 +19,12 @@ class RecordsListView(ListView):
     template_name = 'users/records.html'
 
     def get_queryset(self):
-        RecordsList = Record.objects.all().filter(user = self.request.user)
-        # print("user")
-        # print(User)
-        # print(User.objects)
+        RecordsList = Record.objects.all().filter(user = self.request.user).order_by('-dateTime')
         return RecordsList
 
     def get_context_data(self, **kwargs):
         context = super(RecordsListView, self).get_context_data(**kwargs)
+        print(context)
         return context
 
 def UploadDatasetView(request):
@@ -46,8 +44,8 @@ def UploadDatasetView(request):
             # load in dataset and store all features and dataset title into the session
             data = pd.read_csv(dataset.file.path)
             request.session['title'] = dataset.title
-            request.session['allFeatures'] = list(data.columns)
-            return HttpResponseRedirect('/visualization')
+            request.session['allTargets'] = list(data.columns)
+            return HttpResponseRedirect('/target')
     else:
         form = UploadDatasetForm()
     return render(request, 'regressor/upload-dataset.html', {'form': form})   
@@ -62,7 +60,7 @@ def ChooseFeaturesView(request):
             if not request.session.get('features'):
                 request.session['features'] = []  # changing featureFormData to hold data from this submission
             request.session['features'] = form.cleaned_data['features']
-            return HttpResponseRedirect('/target') #TODO: Change redirect to the new form that you're gonna create
+            return HttpResponseRedirect('/specifications') #TODO: Change redirect to the new form that you're gonna create
     else:
         form = FeaturesForm(request=request)  # rendering form as usual from features
         return render(request, 'regressor/forms/feature_form.html', {'form': form})
@@ -75,7 +73,7 @@ def ChooseTargetView(request):
             if not request.session.get('target'):
                 request.session['target'] = []  # changing featureFormData to hold data from this submission
             request.session['target'] = form.cleaned_data['target']
-            return HttpResponseRedirect('/specifications')
+            return HttpResponseRedirect('/visualization')
     else:
         form = TargetForm(request=request)  # rendering form as usual from features
         return render(request, 'regressor/forms/target_form.html', {'form': form})
@@ -139,6 +137,7 @@ def ResultsView(request):
             randomState=randomState,
             numFolds=numFolds,
             target=target,
+            features = features,
             result=(result*100))
 
         # delete dataset file and instance
