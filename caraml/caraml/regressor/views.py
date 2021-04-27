@@ -19,11 +19,12 @@ class RecordsListView(ListView):
     template_name = 'users/records.html'
 
     def get_queryset(self):
-        RecordsList = Record.objects.all().filter(user = self.request.user)
+        RecordsList = Record.objects.all().filter(user = self.request.user).order_by('-dateTime')
         return RecordsList
 
     def get_context_data(self, **kwargs):
         context = super(RecordsListView, self).get_context_data(**kwargs)
+        print(context)
         return context
 
 def UploadDatasetView(request):

@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %} Records of {{ object.username }}{% endblock %}
+{% block header %}
+    <h1>Records: {{ object_list.first.user|title }}</h1>
+{% endblock header %}
 
 {% block content %}
+
 {% if object_list%}
 {%for record in object_list%}
 <div class="accordion" id="accordionExample">
@@ -11,7 +14,7 @@
     <h2 class="accordion-header">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
             data-bs-target="#collapse{{forloop.counter}}" aria-expanded="false" aria-controls="collapse{{forloop.counter}}">
-            {{ record.title }}
+            {{ record.title|title }}:  {{record.dateTime }}
         </button>
     </h2>
     </div>
@@ -20,28 +23,24 @@
         <div class="accordion-body">
             <table class="table">
                 <tr>
-                    <td>Date and Time</td>
-                    <td>{{record.dateTime}} </td>
-                </tr>
-                <tr>
                     <td>Random State</td>
                     <td>{{record.randomState}} </td>
                 </tr>
                     
-                    <td>Number of folds</td>
+                    <td>Number of Folds</td>
                     <td>{{record.numFolds}} </td>
-            </tr>
-            <tr>
-                <td>Features</td>
-                <td>{{record.features}} </td>
-            </tr>
+                </tr>
+                <tr>
+                    <td>Features</td>
+                    <td>{{record.features|join:", " }} </td>
+                </tr>
                 <tr>
                     <td>Target</td>
                     <td>{{record.target}} </td>
                 </tr>    
                 <tr>
-                    <td>Result</td>
-                    <td>{{record.result}} </td>
+                    <td>Accuracy</td>
+                    <td>{{record.result}}% </td>
                 </tr>
         </table>
         </div>
