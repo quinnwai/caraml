@@ -1,4 +1,4 @@
-/* These styles are generated from project.scss. */
+/* These styles are generated from project.css. */
 
 .alert-debug {
   color: black;
@@ -10,4 +10,12 @@
   color: #b94a48;
   background-color: #f2dede;
   border-color: #eed3d7;
+}
+
+.info-header div {
+  display: inline-block;
+}
+
+.info-icon:hover {
+
 }

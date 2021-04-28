@@ -1,13 +1,59 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Feature Visualization{% endblock %}
+{% block header %}
+    <h1>Feature Visualization</h1>
+    <p class="lead">Here are the plots of {{target | lower}} against all other numerical features. Use these as a way to select features</p> 
+{% endblock header %}
 
 {% block content %}
-<p>[insert new graphs here]</p>
+
+<!-- <div class="slideshow-container"></div> -->
+    {% for path in image_paths %}
+        <img class="mySlides" src={{path}} /> 
+        <!-- todo: "graph-slides"  -->
+    {% endfor %}
+</div>
+
+
+<!-- <button class="prev-button">&#10094;</button>
+<button class="next-button">&#10095;</button> -->
+
+<button class="w3-button w3-display-left">&#10094;</button>
+<button class="w3-button w3-display-right">&#10095;</button>
 
 <div class="col-sm-12">
     <a class="btn btn-primary" href="{% url 'feature' %}" role="button">Next</a>
 </div>
 
 {% endblock content %}
+
+{% block inline_javascript %}
+<!-- Source: https://www.w3schools.com/howto/howto_js_slideshow.asp -->
+    <script>
+        var slideIndex = 1;
+        showDivs(slideIndex);
+
+        function plusDivs(n) {
+            showDivs(slideIndex += n);
+        }
+
+        function showDivs(n) {
+            var i;
+            var slides = document.getElementsByClassName("mySlides"); //todo: graph-slides
+            if (n > slides.length) {slideIndex = 1}
+            if (n < 1) {slideIndex = slides.length}
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+            slides[slideIndex-1].style.display = "block";
+        }
+
+        document.getElementsByClassName("w3-button w3-display-left")[0].addEventListener("click", function(event){
+            plusDivs(-1);
+        });
+        document.getElementsByClassName("w3-button w3-display-right")[0].addEventListener("click", function(event){
+            plusDivs(+1);
+        });
+    </script>
+    {% endblock inline_javascript %}

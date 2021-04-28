@@ -1,13 +1,19 @@
 {% extends "base.html" %}
-
-{% block title %}
-Choose features
-{% endblock %}
+{% load static %}
 
 {% block header %}
-<h1>Choose the target field for the regressor</h1>
-<p class="lead">Choose the Target you want for the regressor</p>
-{% endblock %}
+<h1>Target Selection</h1>
+
+
+<div class="tooltip"> hello
+    <img src={% static 'images/info.png' %} alt="" />
+    <!-- <span class="tooltiptext">Targets testtesttestse</span> -->
+</div>
+
+
+<p class="lead">Choose the target you want for your regressor</p> 
+<!-- TODO: insert info icon here -->
+{% endblock header %}
 
 {% block content %}
 <div class="container">
@@ -15,4 +21,4 @@ Choose features
     <!-- line below takes all data from FormHelper if FormHelper is named -->
     {% crispy form %}
 </div>
-{% endblock %}
+{% endblock content %}
