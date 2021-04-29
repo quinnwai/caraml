@@ -2,7 +2,9 @@
 {% load static %}
 
 {% block header %}
-    <h1>Records: {{ object_list.first.user|title }}</h1>
+<h1>Records: {{ object_list.first.user|title }}</h1>
+
+<p class="lead">Below is the list of past ML models and their related information</p>
 {% endblock header %}
 
 {% block content %}
