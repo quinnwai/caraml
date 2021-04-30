@@ -12,9 +12,8 @@ Choose features
 {% block content %}
 <div class="container">
     {% load crispy_forms_tags %}
-    <input type="checkbox" onClick="toggle(this)" /> Toggle All<br />
     <!-- line below takes all data from FormHelper if FormHelper is named -->
     {% crispy form %}
-    
+    <input type="checkbox" onClick="toggle(this)" /> Select all features 
 </div>
 {% endblock %}
