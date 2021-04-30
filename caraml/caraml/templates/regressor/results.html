@@ -6,13 +6,12 @@ Results
 
 {% block header %}
 <h1>Results</h1>
-<p class="lead">After training the model, here are your results:</p>
 {% endblock %}
 
 {% block content %}
 <div class="container">
     <!-- use Jinja here to access whatever has been stored  in the views -->
- 
-    <h2><strong>Average score</strong>: {{ result }}%</h2>
+
+    <h2><strong>Accuracy</strong>: {{ result }}%</h2>
 </div>
 {% endblock %}

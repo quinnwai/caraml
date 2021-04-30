@@ -7,12 +7,11 @@ from django.contrib.postgres.fields import ArrayField
 class Dataset(models.Model):
     title = models.CharField(max_length=100, unique=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    file = models.FileField()
+    file = models.FileField(upload_to="datasets")
 
-    # Source: https://stackoverflow.com/questions/13455052/getting-file-extension-in-django-template
-    # def extension(self):
-    #     name, extension = os.path.splitext(self.file.name)
-    #     return extension
+    def __str__(self):
+        return self.title
+
 class Record(models.Model):
     title = models.CharField(max_length=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -22,3 +21,6 @@ class Record(models.Model):
     target = models.CharField(max_length=100)
     features = ArrayField(models.CharField(max_length=100))
     result = models.DecimalField(decimal_places=2, max_digits=4)
+
+    def __str__(self):
+        return self.title + " (" + self.dateTime.strftime('%B %d, %Y') + ")"

@@ -1,4 +1,4 @@
-from caraml.users.views import User
+from django.conf import settings
 from django.http import HttpResponseRedirect,HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic.edit import FormView
@@ -9,10 +9,16 @@ import os
 
 ## calculation-specific imports
 import pandas as pd
+import numpy as np
 from sklearn.model_selection import KFold
 from sklearn.linear_model import LinearRegression
-##
 
+## graph-specific imports/settings
+import matplotlib
+matplotlib.use('Agg')
+from matplotlib import pyplot as plt
+
+from caraml.users.views import User
 from caraml.regressor.forms import FeaturesForm, TargetForm, UploadDatasetForm, SpecificationsForm
 
 class RecordsListView(ListView):
@@ -51,6 +57,15 @@ def UploadDatasetView(request):
     return render(request, 'regressor/upload-dataset.html', {'form': form})   
 
 def FeatureVisualizationView(request):
+
+    if request.method == 'GET':
+        image_paths = scatterplotFeatures(request)
+        target_idx = request.session["target"]
+        target = request.session["allTargets"][target_idx]
+
+        context = {'image_paths': image_paths, 'target': target}
+        print(image_paths)
+        return render(request, 'regressor/feature-visualization.html', context)
     return render(request, 'regressor/feature-visualization.html')
 
 def ChooseFeaturesView(request):
@@ -72,7 +87,7 @@ def ChooseTargetView(request):
         if form.is_valid():
             if not request.session.get('target'):
                 request.session['target'] = []  # changing featureFormData to hold data from this submission
-            request.session['target'] = form.cleaned_data['target']
+            request.session['target'] = int(form.cleaned_data['target'])
             return HttpResponseRedirect('/visualization')
     else:
         form = TargetForm(request=request)  # rendering form as usual from features
@@ -97,8 +112,8 @@ def ResultsView(request):
     if request.method == 'GET':
 
         # get all possible feature and targets from session
-        allFeatures = request.session["allFeatures"]
-        allTargets = request.session["allTargets"]
+        allFeatures = request.session.get("allFeatures", None)
+        allTargets = request.session.get("allTargets", None)
         features = []
 
         # append strings to list of features
@@ -106,10 +121,11 @@ def ResultsView(request):
             features.append(allFeatures[int(i)])
 
         # get target from location in allTargets
-        target = allTargets[int(request.session["target"])]
-        title = request.session["title"]
-        randomState = request.session["randomState"]
-        numFolds = request.session["numFolds"]
+        if allTargets and request.session.get("target", None):
+            target = allTargets[int(request.session.get("target", None))]
+        title = request.session.get("title", None)
+        randomState = request.session.get("randomState", None)
+        numFolds = request.session.get("numFolds", None)
 
         # get specific dataset by name
         if(not title):
@@ -195,3 +211,48 @@ def getResults(filePath, features, target, randomState, numFolds):
     avg_score = score/(fold+1)
 
     return avg_score
+
+# plots all scatter plots and stores them as images. Returns list of image paths
+def scatterplotFeatures(request):
+    # Source: https://projectsplaza.com/how-to-create-bar-chart-image-with-matplotlib-in-django/
+
+    # variable to return
+    image_paths = []
+
+    # get all features, target, and dataset by name
+    allTargets = request.session.get('allTargets', None)
+    target = request.session.get('target', None)
+    print(f'target ois {target}')
+    title = request.session.get('title', None)
+    if(not title):
+        return HttpResponse("Invalid page access. Please return to a different page") # TODO: return to upload csv page with message
+
+    dataset = Dataset.objects.get(title=title)
+    path = dataset.file.path
+    data = pd.read_csv(path)
+
+    # get features and index into y
+    y = data.iloc[:,target]
+    y_lbl = allTargets[target]
+
+    # for each feature, plot the function (must be int)
+    for i in range(len(allTargets)):
+        # store all relevant info
+        feature = allTargets[i]
+        X = data.iloc[:,i]
+
+        # check if numerical
+        if (np.issubdtype(X.dtype, np.integer) or np.issubdtype(X.dtype, np.floating)) and i != target:
+            plt.scatter(X, y, color="darkgoldenrod")
+            plt.title(f'{y_lbl} vs {feature}')
+            plt.xlabel(feature)
+            plt.ylabel(y_lbl)
+            
+            # add path to return list and save figure to path
+            image_path = f'graphs/{request.user.username}{i}.png'
+            image_paths.append(f'../media/{image_path}')
+
+            plt.savefig(f'{settings.MEDIA_ROOT}/{image_path}')
+            plt.clf()
+    
+    return image_paths
