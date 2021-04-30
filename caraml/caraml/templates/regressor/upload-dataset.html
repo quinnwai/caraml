@@ -1,10 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-Upload Dataset
-{% endblock %}
-
 {% block header %}
 <h1>Upload Dataset</h1>
 <span class="lead">Upload the dataset you want to use to create your model</span>
@@ -12,9 +8,9 @@ Upload Dataset
 <div class="info-tooltip">
     <img class="info-icon" src={% static 'images/info.png' %}/>
 
-    <p class="tooltiptext">
-        Make sure to upload a csv file with column names! Those names will be used later to select variables
-    </p>
+    <span class="tooltiptext">
+        Make sure to upload a csv file with column names to be used as variables later!
+    </span>
 </div>
 {% endblock %}
 
