@@ -57,14 +57,20 @@ def UploadDatasetView(request):
     return render(request, 'regressor/upload-dataset.html', {'form': form})   
 
 def FeatureVisualizationView(request):
-
+    # on page load
     if request.method == 'GET':
+        # get scatter plot images
         image_paths = scatterplotFeatures(request)
+
+        # store name of target
         target_idx = request.session["target"]
         target = request.session["allTargets"][target_idx]
 
+        # store imagePaths to be deleted later
+        request.session["imagePaths"] = image_paths
+
+        # prepare variables before loading template
         context = {'image_paths': image_paths, 'target': target}
-        print(image_paths)
         return render(request, 'regressor/feature-visualization.html', context)
     return render(request, 'regressor/feature-visualization.html')
 
@@ -161,17 +167,23 @@ def ResultsView(request):
             os.remove(path)
         dataset.delete()
 
+
+        # TODO: delete all images
+        # imagePaths = request.session["imagePaths"]
+        # for imagePath in imagePaths:
+        #     # if(os.path.relpathexists(imagePath)):
+        #         # print("path exists \n\n")
+        #         # os.remove(imagePath)
+        #     os.remove(imagePath)
+
         # get rid of all session variables
         keys = list(request.session.keys())
         for key in keys:
             if key[0]!='_':
                 del request.session[key]
 
-        context = {
-        'result': round(result*100, 2)
-        }
-        
-        # return HttpResponse(f'average score of {result}')
+        # prepare variables and return them with template
+        context = { 'result': round(result*100, 2) }
         return render(request, 'regressor/results.html', context)
 
 def getResults(filePath, features, target, randomState, numFolds):
@@ -191,13 +203,13 @@ def getResults(filePath, features, target, randomState, numFolds):
     ##### cross validation and model evaluation #####
     for fold, (train_idx, test_idx) in enumerate(kf.split(X)):
         ## pre-processing phase
-        #define train and test 
+        #define training and test datasets
         X_train = X.loc[train_idx,:]
         X_test = X.loc[test_idx,:]
         y_train = y.loc[train_idx]
         y_test = y.loc[test_idx]
 
-        ## use k-NN to predict and get r squared
+        ## use linear regression to predict and get r squared
         # create and fit model
         model = LinearRegression().fit(X_train, y_train)
 
@@ -222,11 +234,10 @@ def scatterplotFeatures(request):
     # get all features, target, and dataset by name
     allTargets = request.session.get('allTargets', None)
     target = request.session.get('target', None)
-    print(f'target ois {target}')
+
     title = request.session.get('title', None)
     if(not title):
         return HttpResponse("Invalid page access. Please return to a different page") # TODO: return to upload csv page with message
-
     dataset = Dataset.objects.get(title=title)
     path = dataset.file.path
     data = pd.read_csv(path)

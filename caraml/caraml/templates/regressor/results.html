@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}
 Results
@@ -6,6 +7,16 @@ Results
 
 {% block header %}
 <h1>Results</h1>
+
+<span class="lead">Below is your test accuracy</span> 
+<div class="info-tooltip">
+    <img class="info-icon" src={% static 'images/info.png' %}/>
+
+    <p class="tooltiptext">
+        The test accuracy is the percentage of correctly predicted test datapoint.
+        This was value averaged over the number of folds specified to make sure the results are more reliable
+    </p>
+</div>
 {% endblock %}
 
 {% block content %}
