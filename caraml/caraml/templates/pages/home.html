@@ -1,5 +1,16 @@
 {% extends "base.html" %}
-{%block content%}
-<a href="{% url 'upload-dataset' %}">Upload form</a>
-<br>
-{%endblock%}
+
+{% block header %}
+<h1>Welcome to CaraML!</h1>
+<p class="lead">We makes it easy to train a multiple linear regression model without code</p>
+{% endblock %}
+
+{% block content %}
+
+{% if request.user.is_authenticated %}
+  <a href="{% url 'upload-dataset' %}">Get started</a>
+{% else %}
+<p>But before that, please sign up first!</p>
+{% endif %}
+
+{% endblock %}
