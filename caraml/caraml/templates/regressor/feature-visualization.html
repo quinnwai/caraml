@@ -2,22 +2,23 @@
 {% load static %}
 
 {% block header %}
-    <h1>Feature Visualization</h1>
-    <p class="lead">Here are the plots of {{target | lower}} against all other numerical features. Use these as a way to select features</p> 
+<h1>Feature Visualization</h1>
+<span class="lead">Here are the plots of {{target | lower}} vs other features</span> 
+
+<div class="info-tooltip">
+    <img class="info-icon" src={% static 'images/info.png' %}/>
+
+    <p class="tooltiptext">
+        These plots below should help show you the relationships between your
+        features, or independent variables, and the selected target
+    </p>
+</div>
 {% endblock header %}
 
 {% block content %}
-
-<!-- <div class="slideshow-container"></div> -->
-    {% for path in image_paths %}
-        <img class="mySlides" src={{path}} /> 
-        <!-- todo: "graph-slides"  -->
-    {% endfor %}
-</div>
-
-
-<!-- <button class="prev-button">&#10094;</button>
-<button class="next-button">&#10095;</button> -->
+{% for path in image_paths %}
+    <img class="mySlides" src={{path}} /> 
+{% endfor %}
 
 <button class="w3-button w3-display-left">&#10094;</button>
 <button class="w3-button w3-display-right">&#10095;</button>
