@@ -12,6 +12,7 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import KFold
 from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import OneHotEncoder
 
 ## graph-specific imports/settings
 import matplotlib
@@ -191,8 +192,37 @@ def getResults(filePath, features, target, randomState, numFolds):
     # create pandas dataframe
     data = pd.read_csv(filePath)
 
+    # create feature dataset and labels
     X = data.loc[:,features]
     y = data.loc[:,target]
+    
+    # add indices of features that are strings
+    str_indices = []
+    for i in range(0, len(features)):
+        if(isinstance(X.loc[0, features[i]], str)):
+            str_indices.append(i)
+
+    # if strings columns exist, split dataset into numeric and string data
+    if (len(str_indices) != 0):
+        # separate X into numeric and non-numerical (string-based) datasets using feature labels
+        features = np.array(features)
+        str_features = features[str_indices]
+        X_str = X[str_features]
+        X_num = X.drop(str_features, axis=1)
+
+        # fit One Hot Encoder model
+        enc = OneHotEncoder().fit(X_str)
+
+        # for each category of arrays, create column labels for dataframe later
+        for i in range(len(enc.categories_)):
+            if(i == 0):
+                columns = enc.categories_[i]
+            else:
+                columns = np.concatenate((columns, enc.categories_[i]))
+        
+        # create encoded array and join with numerical array
+        X_enc = pd.DataFrame(enc.transform(X_str).toarray(), columns=columns)
+        X = pd.concat([X_num, X_enc], axis=1)
 
     # initialize KFolds
     kf = KFold(n_splits=numFolds, shuffle=True, random_state=randomState)
