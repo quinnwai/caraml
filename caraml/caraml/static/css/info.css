@@ -28,18 +28,7 @@
     visibility: visible;
 }
 
-/* .info-tooltip .tooltiptext::after {
-    content: " ";
-    position: absolute;
-    top: 13%;
-    right: 100%; 
-    margin-top: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: transparent silver transparent transparent;
-} */
-
-.info-icon{
+.info-icon {
     width: 50%;
     height: auto;
 }
