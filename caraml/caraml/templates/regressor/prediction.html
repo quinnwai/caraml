@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Results
+{% endblock %}
+
+{% block header %}
+<h1>Results</h1>
+
+<span class="lead">Below is your predicted data</span>
+<div class="info-tooltip">
+    <img class="info-icon" src={% static 'images/info.png' %} />
+
+    <p class="tooltiptext">
+        Lols    
+    </p>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- use Jinja here to access whatever has been stored  in the views -->
+</div>
+
+{% endblock %}

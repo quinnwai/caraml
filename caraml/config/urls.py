@@ -21,6 +21,8 @@ urlpatterns = [
     path("target/", views.ChooseTargetView.as_view(), name="target"),
     path("specifications/", views.ChooseSpecificationsView, name="specifications"),
     path("results/", views.ResultsView, name="results"),
+    path("second-upload/", views.SecondUploadView, name="second-upload"),
+    path("prediction/", views.PredictionsView, name="prediction"),
     path("records/", views.RecordsListView.as_view(), name = "records")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

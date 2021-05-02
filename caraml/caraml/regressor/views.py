@@ -1,11 +1,15 @@
+from csv import reader
 from django.conf import settings
 from django.http import HttpResponseRedirect,HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic.edit import FormView
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
+from pickle import dump, load
 from . models import Record, Dataset
 import os
+import csv
+
 
 ## calculation-specific imports
 import pandas as pd
@@ -48,6 +52,12 @@ def UploadDatasetView(request):
             dataset.save()
             form.save_m2m()
 
+                # get rid of all session variables
+            keys = list(request.session.keys())
+            for key in keys:
+                if key[0] != '_':
+                    del request.session[key]
+
             # load in dataset and store all features and dataset title into the session
             data = pd.read_csv(dataset.file.path)
             request.session['title'] = dataset.title
@@ -56,6 +66,30 @@ def UploadDatasetView(request):
     else:
         form = UploadDatasetForm()
     return render(request, 'regressor/upload-dataset.html', {'form': form})   
+
+
+def SecondUploadView(request):
+    if request.method == 'POST':
+        form = UploadDatasetForm(request.POST, request.FILES)
+
+        #TODO: check if csv before adding
+        if form.is_valid():
+            # make user the currently logged in user
+            dataset = form.save(commit=False)
+            dataset.user = request.user
+
+            # save form with new changes
+            dataset.save()
+            form.save_m2m()
+
+            # load in dataset and store all features and dataset title into the session
+            data = pd.read_csv(dataset.file.path)
+            request.session['title'] = dataset.title
+            request.session['allTargets'] = list(data.columns)
+            return HttpResponseRedirect('/prediction')
+    else:
+        form = UploadDatasetForm()
+    return render(request, 'regressor/second-upload.html', {'form': form})
 
 def FeatureVisualizationView(request):
     # on page load
@@ -190,12 +224,6 @@ def ResultsView(request):
         #         # os.remove(imagePath)
         #     os.remove(imagePath)
 
-        # get rid of all session variables
-        keys = list(request.session.keys())
-        for key in keys:
-            if key[0]!='_':
-                del request.session[key]
-
         # prepare variables and return them with template
         context = { 'result': round(result*100, 2) }
         return render(request, 'regressor/results.html', context)
@@ -257,7 +285,7 @@ def getResults(filePath, features, target, randomState, numFolds):
         model = LinearRegression().fit(X_train, y_train)
 
         # predict using new model and compute r_squared value
-        y_pred = model.predict(X_test)
+        dump(model, open('model.pkl', 'wb'))
         r_squared = model.score(X_test, y_test)
 
         # sum
@@ -266,6 +294,87 @@ def getResults(filePath, features, target, randomState, numFolds):
     avg_score = score/(fold+1)
 
     return avg_score
+
+def getPredictions(filePath, features):
+    
+    data = pd.read_csv(filePath)
+    X = data.loc[:, features]
+    # add indices of features that are strings
+    str_indices = []
+    for i in range(0, len(features)):
+        if(isinstance(X.loc[0, features[i]], str)):
+            str_indices.append(i)
+
+    # if strings columns exist, split dataset into numeric and string data
+    if (len(str_indices) != 0):
+        # separate X into numeric and non-numerical (string-based) datasets using feature labels
+        features = np.array(features)
+        str_features = features[str_indices]
+        X_str = X[str_features]
+        X_num = X.drop(str_features, axis=1)
+
+        # fit One Hot Encoder model
+        enc = OneHotEncoder().fit(X_str)
+
+        # for each category of arrays, create column labels for dataframe later
+        for i in range(len(enc.categories_)):
+            if(i == 0):
+                columns = enc.categories_[i]
+            else:
+                columns = np.concatenate((columns, enc.categories_[i]))
+
+        # create encoded array and join with numerical array
+        X_enc = pd.DataFrame(enc.transform(X_str).toarray(), columns=columns)
+        X = pd.concat([X_num, X_enc], axis=1)
+    X_new = X.loc[:]
+    model = load(open('model.pkl', 'rb'))
+    y_pred = model.predict(X_new)
+    return y_pred
+
+def PredictionsView(request):
+    # Open the input_file in read mode and output_file in write mode
+    title = request.session["title"]
+    allFeatures = request.session.get("allFeatures", None)
+    features = []
+
+    # append strings to list of features
+    for i in request.session["features"]:
+        features.append(allFeatures[int(i)])
+    if(not title):
+        # TODO: return to previous page with message
+        return HttpResponse("Invalid page access. Please return to a different page")
+
+    dataset = Dataset.objects.get(title=request.session['title'])
+    filePath = dataset.file.path
+
+    # ensure user inserted this dataset
+    if(dataset.user != request.user):
+        # TODO: return to previous page with message
+        return HttpResponse("Invalid page access. Please return to a different page")
+
+    # check all variables are not null before proceeding
+
+    if(not features):
+        # TODO: return to previous page with message
+        return HttpResponse("Invalid page access. Please return to a different page")
+    dataset = Dataset.objects.get(title=request.session['title'])
+    filePath = dataset.file.path
+    y_pred = getPredictions(filePath, features)
+    response = HttpResponse(content_type='text/csv')
+    
+    # print(filePath)
+    csv_input = pd.read_csv(filePath)
+    print(csv_input)
+    csv_input['Predictions'] = y_pred
+    print(csv_input)
+    csv_input.to_csv(response, index=False)
+
+    # delete dataset file and instance
+    if(os.path.exists(filePath)):
+        os.remove(filePath)
+    dataset.delete()
+    response['Content-Disposition'] = 'attachment; filename="predictions.csv"'
+    return response
 
 # plots all scatter plots and stores them as images. Returns list of image paths
 def scatterplotFeatures(request):
