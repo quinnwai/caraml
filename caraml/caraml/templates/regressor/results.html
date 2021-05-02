@@ -25,4 +25,9 @@ Results
 
     <h2><strong>Accuracy</strong>: {{ result }}%</h2>
 </div>
+
+<div>
+    <h3>Wanna upload an unlabeled file with the same columns structure to get predictions?</h3>
+    <a href="{% url 'second-upload' %}">Upload file</a>
+</div>
 {% endblock %}
