@@ -8,13 +8,13 @@ Results
 {% block header %}
 <h1>Results</h1>
 
-<span class="lead">Below is your test accuracy</span> 
+<span class="lead">Below is your test score</span> 
 <div class="info-tooltip">
     <img class="info-icon" src={% static 'images/info.png' %}/ alt="info icon">
 
     <p class="tooltiptext">
-        The test accuracy is the percentage of correctly predicted test datapoint.
-        This was value averaged over the number of folds specified to make sure the results are more reliable
+        The score is the known as the r-squared value, a percentage representing how well the data was predicted.
+        This value was averaged for the number of folds specified to make sure the results are more reliable
     </p>
 </div>
 {% endblock %}
@@ -23,11 +23,11 @@ Results
 <div class="container">
     <!-- use Jinja here to access whatever has been stored  in the views -->
 
-    <h2><strong>Accuracy</strong>: {{ result }}%</h2>
+    <h2><strong>Score</strong>: {{ result }}%</h2>
 </div>
 
 <div>
-    <h3>Wanna upload an unlabeled file with the same columns structure to get predictions?</h3>
-    <a href="{% url 'second-upload' %}">Upload file</a>
+    <p>Do you have similarly structured data that you want to predict results for?</p>
+    <a href="{% url 'second-upload' %}">Make Predictions on Unlabeled Data</a>
 </div>
 {% endblock %}

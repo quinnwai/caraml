@@ -9,7 +9,7 @@
     <img class="info-icon" src={% static 'images/info.png' %} />
 
     <span class="tooltiptext">
-        Make sure to upload a csv file with the same column names as before!
+        Upload an unlabeled dataset to get a new labelled dataset!
     </span>
 </div>
 {% endblock header %}
@@ -19,5 +19,6 @@
     {% load crispy_forms_tags %}
     <!-- line below takes all data from FormHelper if FormHelper is named -->
     {% crispy form %}
+    <a href="{% url 'home' %}">Return to home</a>
 </div>
 {% endblock content %}
