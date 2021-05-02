@@ -344,16 +344,12 @@ def PredictionsView(request):
     if(not features):
         # TODO: return to previous page with message
         return HttpResponse("Invalid page access. Please return to a different page")
-    dataset = Dataset.objects.get(title=request.session['title'])
-    filePath = dataset.file.path
     y_pred = getPredictions(filePath, features)
     response = HttpResponse(content_type='text/csv')
     
     # print(filePath)
     csv_input = pd.read_csv(filePath)
-    print(csv_input)
     csv_input['Predictions'] = y_pred
-    print(csv_input)
     csv_input.to_csv(response, index=False)
 
     # delete dataset file and instance
