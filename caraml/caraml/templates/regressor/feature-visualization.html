@@ -6,7 +6,7 @@
 <span class="lead">Here are the plots of {{target | lower}} vs other features</span> 
 
 <div class="info-tooltip">
-    <img class="info-icon" src={% static 'images/info.png' %}/>
+    <img class="info-icon" src={% static 'images/info.png' %} alt="info icon"/>
 
     <p class="tooltiptext">
         These plots below should help show you the relationships between your
@@ -17,7 +17,7 @@
 
 {% block content %}
 {% for path in image_paths %}
-    <img class="mySlides" src={{path}} /> 
+    <img class="mySlides" src={{path}} alt="scatterplot"/> 
 {% endfor %}
 
 <button class="w3-button w3-display-left">&#10094;</button>

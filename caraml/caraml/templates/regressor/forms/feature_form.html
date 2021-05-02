@@ -7,11 +7,12 @@
 <span class="lead">Choose the features you want to use to predict your target</span> 
 
 <div class="info-tooltip">
-    <img class="info-icon" src={% static 'images/info.png' %}/>
+    <img class="info-icon" src={% static 'images/info.png' %} alt="info icon"/>
 
     <p class="tooltiptext">
-        The features are the independent variables that you will use to predict your target variable.
-        Since this is a linear regression model, make sure to select only numerical variables
+        The features are the independent variables used to predict your target variable.
+        Please select only numerical features or categorical features if they are strings.
+        Categorical variables will be one hot encoded: each unique option has a dedicated binary column representing true or false.
     </p>
 </div>
 {% endblock %}
