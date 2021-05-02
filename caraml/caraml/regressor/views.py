@@ -75,30 +75,43 @@ def FeatureVisualizationView(request):
         return render(request, 'regressor/feature-visualization.html', context)
     return render(request, 'regressor/feature-visualization.html')
 
-def ChooseFeaturesView(request):
-    if request.method == 'POST':
-        form = FeaturesForm(request, request.POST) 
-        if form.is_valid():
-            if not request.session.get('features'):
-                request.session['features'] = []  # changing featureFormData to hold data from this submission
-            request.session['features'] = form.cleaned_data['features']
-            return HttpResponseRedirect('/specifications') #TODO: Change redirect to the new form that you're gonna create
-    else:
-        form = FeaturesForm(request=request)  # rendering form as usual from features
-        return render(request, 'regressor/forms/feature_form.html', {'form': form})
+class ChooseFeaturesView(FormView):
+    template_name = 'regressor/forms/feature_form.html'
+    form_class = FeaturesForm
+    success_url = '/specifications'
 
+    # sets up request to use
+    # Source: https://chriskief.com/2012/12/18/django-modelform-formview-and-the-request-object/
+    def get_form_kwargs(self):
+        kwargs = super(ChooseFeaturesView, self).get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
 
-def ChooseTargetView(request):
-    if request.method == 'POST':
-        form = TargetForm(request, request.POST)
-        if form.is_valid():
-            if not request.session.get('target'):
-                request.session['target'] = []  # changing featureFormData to hold data from this submission
-            request.session['target'] = int(form.cleaned_data['target'])
-            return HttpResponseRedirect('/visualization')
-    else:
-        form = TargetForm(request=request)  # rendering form as usual from features
-        return render(request, 'regressor/forms/target_form.html', {'form': form})
+    def form_valid(self, form):
+        if not self.request.session.get('features'):
+            self.request.session['features'] = []  # changing featureFormData to hold data from this submission
+            self.request.session['features'] = form.cleaned_data['features']
+            return HttpResponseRedirect('/specifications')
+
+class ChooseTargetView(FormView):
+    template_name = 'regressor/forms/target_form.html'
+    form_class = TargetForm
+    success_url = '/visualization'
+
+    # sets up request to use
+    # Source: https://chriskief.com/2012/12/18/django-modelform-formview-and-the-request-object/
+    def get_form_kwargs(self):
+        kwargs = super(ChooseTargetView, self).get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        if not self.request.session.get('target'):
+                self.request.session['target'] = []  # changing featureFormData to hold data from this submission
+        self.request.session['target'] = int(form.cleaned_data['target'])
+        return HttpResponseRedirect('/visualization')
 
 
 def ChooseSpecificationsView(request):
@@ -109,7 +122,7 @@ def ChooseSpecificationsView(request):
                 request.session['specifications'] = []  # changing featureFormData to hold data from this submission
             request.session['randomState'] = form.cleaned_data['randomState']
             request.session['numFolds'] = form.cleaned_data['nFolds']
-            return HttpResponseRedirect('/results')  # TODO: Change redirect to the new form that you're gonna create
+            return HttpResponseRedirect('/results') 
     else:
         form = SpecificationsForm(request=request)  # rendering form as usual from features
         return render(request, 'regressor/forms/specifications_form.html', {'form': form})

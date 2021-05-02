@@ -38,7 +38,7 @@ class FeaturesForm(forms.Form):
         # defined so that crispy forms front-end is simple
         self.helper = FormHelper(self)
 
-        # specifying FORMatting... hah fun times
+        # specify formatting
         self.helper.form_method = 'post'
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-lg-2'
@@ -46,18 +46,17 @@ class FeaturesForm(forms.Form):
         self.helper.add_input(Submit('submit', 'Submit'))
 
 class TargetForm(forms.Form):
-
     def __init__(self, request, *args, **kwargs):
         super(TargetForm, self).__init__(*args, **kwargs)
         #request.session["allTargets"] = options(request.session["allTargets"])
         self.fields["target"] = forms.ChoiceField(
             choices=options(request.session["allTargets"]),
-            widget=forms.RadioSelect,)
+            widget=forms.RadioSelect)
 
         # defined so that crispy forms front-end is simple
         self.helper = FormHelper(self)
 
-        # specifying FORMatting... hah fun times
+        # specify formatting
         self.helper.form_method = 'post'
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-lg-2'
@@ -74,7 +73,7 @@ class SpecificationsForm(forms.Form):
         # defined so that crispy forms front-end is simple
         self.helper = FormHelper(self)
 
-        # specifying FORMatting... hah fun times
+        # specify formatting
         self.helper.form_method = 'post'
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-lg-2'
