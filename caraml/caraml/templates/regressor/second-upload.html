@@ -3,13 +3,13 @@
 
 {% block header %}
 <h1>Upload Dataset</h1>
-<span class="lead">Upload the dataset you want to use to create your model</span>
+<span class="lead">Upload the unlabeled dataset you want predictions for</span>
 
 <div class="info-tooltip">
-    <img class="info-icon" src={% static 'images/info.png' %} alt="info icon"/>
+    <img class="info-icon" src={% static 'images/info.png' %} />
 
     <span class="tooltiptext">
-        Make sure to upload a csv file with column names to be used as variables later!
+        Upload an unlabeled dataset to get a new labelled dataset!
     </span>
 </div>
 {% endblock header %}
@@ -19,5 +19,6 @@
     {% load crispy_forms_tags %}
     <!-- line below takes all data from FormHelper if FormHelper is named -->
     {% crispy form %}
+    <a href="{% url 'home' %}">Return to home</a>
 </div>
 {% endblock content %}
