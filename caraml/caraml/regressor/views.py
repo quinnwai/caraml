@@ -89,7 +89,7 @@ def SecondUploadView(request):
             return HttpResponseRedirect('/prediction')
     else:
         form = UploadDatasetForm()
-    return render(request, 'regressor/upload-dataset.html', {'form': form})
+    return render(request, 'regressor/second-upload.html', {'form': form})
 
 def FeatureVisualizationView(request):
     # on page load

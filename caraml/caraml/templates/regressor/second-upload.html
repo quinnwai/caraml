@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+<h1>Upload Dataset</h1>
+<span class="lead">Upload the unlabeled dataset you want predictions for</span>
+
+<div class="info-tooltip">
+    <img class="info-icon" src={% static 'images/info.png' %} />
+
+    <span class="tooltiptext">
+        Make sure to upload a csv file with the same column names as before!
+    </span>
+</div>
+{% endblock header %}
+
+{% block content %}
+<div class="container">
+    {% load crispy_forms_tags %}
+    <!-- line below takes all data from FormHelper if FormHelper is named -->
+    {% crispy form %}
+</div>
+{% endblock content %}
