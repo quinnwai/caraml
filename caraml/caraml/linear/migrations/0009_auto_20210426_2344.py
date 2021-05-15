@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('regressor', '0008_auto_20210426_2343'),
+        ('linear', '0008_auto_20210426_2343'),
     ]
 
     operations = [

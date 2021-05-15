@@ -2,16 +2,15 @@
 {% load static %}
 
 {% block header %}
-<h1>Target Selection</h1>
-
-<span class="lead">Select a target from the list of all features below</span> 
+<h1>Upload Dataset</h1>
+<span class="lead">Upload the dataset you want to use to create your model</span>
 
 <div class="info-tooltip">
     <img class="info-icon" src={% static 'images/info.png' %} alt="info icon"/>
-    
-    <p class="tooltiptext">
-        The target is the variable you want to predict using your dataset, so select only one column and make sure it's a numerical variable.
-    </p>
+
+    <span class="tooltiptext">
+        Make sure to upload a csv file with column names!
+    </span>
 </div>
 {% endblock header %}
 

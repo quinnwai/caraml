@@ -24,7 +24,7 @@ matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 
 from caraml.users.views import User
-from caraml.regressor.forms import FeaturesForm, TargetForm, UploadDatasetForm, SpecificationsForm
+from caraml.linear.forms import FeaturesForm, TargetForm, UploadDatasetForm, SpecificationsForm
 
 class RecordsListView(ListView):
     template_name = 'users/records.html'
@@ -65,7 +65,7 @@ def UploadDatasetView(request):
             return HttpResponseRedirect('/target')
     else:
         form = UploadDatasetForm()
-    return render(request, 'regressor/upload-dataset.html', {'form': form})   
+    return render(request, 'linear/upload-dataset.html', {'form': form})   
 
 
 def SecondUploadView(request):
@@ -89,7 +89,7 @@ def SecondUploadView(request):
             return HttpResponseRedirect('/prediction')
     else:
         form = UploadDatasetForm()
-    return render(request, 'regressor/second-upload.html', {'form': form})
+    return render(request, 'linear/second-upload.html', {'form': form})
 
 def FeatureVisualizationView(request):
     # on page load
@@ -106,11 +106,11 @@ def FeatureVisualizationView(request):
 
         # prepare variables before loading template
         context = {'image_paths': image_paths, 'target': target}
-        return render(request, 'regressor/feature-visualization.html', context)
-    return render(request, 'regressor/feature-visualization.html')
+        return render(request, 'linear/feature-visualization.html', context)
+    return render(request, 'linear/feature-visualization.html')
 
 class ChooseFeaturesView(FormView):
-    template_name = 'regressor/forms/feature_form.html'
+    template_name = 'linear/forms/feature_form.html'
     form_class = FeaturesForm
     success_url = '/specifications'
 
@@ -128,7 +128,7 @@ class ChooseFeaturesView(FormView):
             return HttpResponseRedirect('/specifications')
 
 class ChooseTargetView(FormView):
-    template_name = 'regressor/forms/target_form.html'
+    template_name = 'linear/forms/target_form.html'
     form_class = TargetForm
     success_url = '/visualization'
 
@@ -145,6 +145,7 @@ class ChooseTargetView(FormView):
         if not self.request.session.get('target'):
                 self.request.session['target'] = []  # changing featureFormData to hold data from this submission
         self.request.session['target'] = int(form.cleaned_data['target'])
+        print(f'\n\ntarget is {self.request.session["target"]}')
         return HttpResponseRedirect('/visualization')
 
 
@@ -159,7 +160,7 @@ def ChooseSpecificationsView(request):
             return HttpResponseRedirect('/results') 
     else:
         form = SpecificationsForm(request=request)  # rendering form as usual from features
-        return render(request, 'regressor/forms/specifications_form.html', {'form': form})
+        return render(request, 'linear/forms/specifications_form.html', {'form': form})
 
 def ResultsView(request):
     # on page load
@@ -175,7 +176,10 @@ def ResultsView(request):
             features.append(allFeatures[int(i)])
 
         # get target from location in allTargets
-        if allTargets and request.session.get("target", None):
+        print(f'\n\nallTargets: {allTargets}')
+        print(f'\n\ntarget: {request.session.get("target", None)}')
+        print(f'\n\ntruth value: {allTargets and request.session.get("target", None)}')
+        if allTargets and request.session.get("target", None) is not None:
             target = allTargets[int(request.session.get("target", None))]
         title = request.session.get("title", None)
         randomState = request.session.get("randomState", None)
@@ -226,7 +230,7 @@ def ResultsView(request):
 
         # prepare variables and return them with template
         context = { 'result': round(result*100, 2) }
-        return render(request, 'regressor/results.html', context)
+        return render(request, 'linear/results.html', context)
 
 def getResults(filePath, features, target, randomState, numFolds):
     ##### data preprocessing #####
