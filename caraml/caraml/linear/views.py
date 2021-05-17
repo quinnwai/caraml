@@ -35,7 +35,6 @@ class RecordsListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(RecordsListView, self).get_context_data(**kwargs)
-        print(context)
         return context
 
 def UploadDatasetView(request):
@@ -145,7 +144,6 @@ class ChooseTargetView(FormView):
         if not self.request.session.get('target'):
                 self.request.session['target'] = []  # changing featureFormData to hold data from this submission
         self.request.session['target'] = int(form.cleaned_data['target'])
-        print(f'\n\ntarget is {self.request.session["target"]}')
         return HttpResponseRedirect('/visualization')
 
 
@@ -176,9 +174,6 @@ def ResultsView(request):
             features.append(allFeatures[int(i)])
 
         # get target from location in allTargets
-        print(f'\n\nallTargets: {allTargets}')
-        print(f'\n\ntarget: {request.session.get("target", None)}')
-        print(f'\n\ntruth value: {allTargets and request.session.get("target", None)}')
         if allTargets and request.session.get("target", None) is not None:
             target = allTargets[int(request.session.get("target", None))]
         title = request.session.get("title", None)
@@ -214,7 +209,7 @@ def ResultsView(request):
             features = features,
             result=(result*100))
 
-        # delete dataset file and instance
+        # delete dataset file and instance TODO: uncomment after done w/ testing
         if(os.path.exists(path)):
             os.remove(path)
         dataset.delete()
@@ -223,10 +218,12 @@ def ResultsView(request):
         # TODO: delete all images
         # imagePaths = request.session["imagePaths"]
         # for imagePath in imagePaths:
+        #     print(f'\n\nimagePath: {imagePath}')
+        #     # print(f'\n\npath exists? {os.path.relpathexists(imagePath)}')
         #     # if(os.path.relpathexists(imagePath)):
-        #         # print("path exists \n\n")
-        #         # os.remove(imagePath)
-        #     os.remove(imagePath)
+        #     #     os.remove(imagePath)
+        #     if os.path.exists(imagePath):
+        #         os.remove(imagePath)
 
         # prepare variables and return them with template
         context = { 'result': round(result*100, 2) }
