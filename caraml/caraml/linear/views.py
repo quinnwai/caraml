@@ -104,7 +104,9 @@ def FeatureVisualizationView(request):
         request.session["imagePaths"] = image_paths
 
         # prepare variables before loading template
+        image_paths = ["../media/" + path for path in image_paths]
         context = {'image_paths': image_paths, 'target': target}
+
         return render(request, 'linear/feature-visualization.html', context)
     return render(request, 'linear/feature-visualization.html')
 
@@ -209,21 +211,23 @@ def ResultsView(request):
             features = features,
             result=(result*100))
 
-        # delete dataset file and instance TODO: uncomment after done w/ testing
+        # delete dataset file and instance
         if(os.path.exists(path)):
             os.remove(path)
         dataset.delete()
 
 
         # TODO: delete all images
-        # imagePaths = request.session["imagePaths"]
-        # for imagePath in imagePaths:
-        #     print(f'\n\nimagePath: {imagePath}')
-        #     # print(f'\n\npath exists? {os.path.relpathexists(imagePath)}')
-        #     # if(os.path.relpathexists(imagePath)):
-        #     #     os.remove(imagePath)
-        #     if os.path.exists(imagePath):
-        #         os.remove(imagePath)
+        imagePaths = request.session["imagePaths"]
+        for imagePath in imagePaths:
+            print(f'\n\nimagePath: {imagePath}')
+            # print(f'\n\npath exists? {os.path.relpathexists(imagePath)}')
+            # if(os.path.relpathexists(imagePath)):
+            #     os.remove(imagePath)
+            newPath = settings.MEDIA_ROOT + imagePath
+            print(f'\n\nnewPath: {newPath}')
+            if os.path.exists(newPath):
+                os.remove(newPath)
 
         # prepare variables and return them with template
         context = { 'result': round(result*100, 2) }
@@ -395,24 +399,33 @@ def scatterplotFeatures(request):
     y = data.iloc[:,target]
     y_lbl = allTargets[target]
 
-    # for each feature, plot the function (must be int)
+    # for each feature, plot a target vs feature scatterplot
     for i in range(len(allTargets)):
-        # store all relevant info
+        # get feature and data column from index
         feature = allTargets[i]
         X = data.iloc[:,i]
 
-        # check if numerical
+        # create plot only if numerical and not target variable
         if (np.issubdtype(X.dtype, np.integer) or np.issubdtype(X.dtype, np.floating)) and i != target:
-            plt.scatter(X, y, color="darkgoldenrod")
+
+            # create labeled scatter plot
+            plt.scatter(X, y, color='#a63719')
             plt.title(f'{y_lbl} vs {feature}')
             plt.xlabel(feature)
             plt.ylabel(y_lbl)
             
             # add path to return list and save figure to path
             image_path = f'graphs/{request.user.username}{i}.png'
-            image_paths.append(f'../media/{image_path}')
+            image_paths.append(image_path)
 
             plt.savefig(f'{settings.MEDIA_ROOT}/{image_path}')
             plt.clf()
+
+            # TODO: save image as file instance
+            # graph = Graph(request.user)
+            # graph.image.name = f'{image_path}'
+            # graph.save()
+
+            
     
     return image_paths
