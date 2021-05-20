@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('regressor', '0003_records'),
+        ('linear', '0003_records'),
     ]
 
     operations = [

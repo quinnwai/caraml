@@ -1,15 +1,14 @@
 {% extends "base.html" %}
 
 {% block header %}
-<h1>Welcome to CaraML!</h1>
-<h3>Creating a regression aided by Machine Learning</h3>
-<p class="lead">We makes it easy to train a multiple linear regression model without code</p>
+<h1>CaraML</h1>
+<p class="lead">Training ML models has never been this easy</p>
 {% endblock %}
 
 {% block content %}
 
 {% if request.user.is_authenticated %}
-  <a href="{% url 'upload-dataset' %}">Get started</a>
+  <a href="{% url 'upload-dataset' %}" class="btn btn-primary">Get started</a>
 {% else %}
 <p>But before that, please sign up first!</p>
 {% endif %}

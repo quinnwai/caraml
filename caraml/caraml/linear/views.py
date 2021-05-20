@@ -24,7 +24,7 @@ matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 
 from caraml.users.views import User
-from caraml.regressor.forms import FeaturesForm, TargetForm, UploadDatasetForm, SpecificationsForm
+from caraml.linear.forms import FeaturesForm, TargetForm, UploadDatasetForm, SpecificationsForm
 
 class RecordsListView(ListView):
     template_name = 'users/records.html'
@@ -35,7 +35,6 @@ class RecordsListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(RecordsListView, self).get_context_data(**kwargs)
-        print(context)
         return context
 
 def UploadDatasetView(request):
@@ -65,7 +64,7 @@ def UploadDatasetView(request):
             return HttpResponseRedirect('/target')
     else:
         form = UploadDatasetForm()
-    return render(request, 'regressor/upload-dataset.html', {'form': form})   
+    return render(request, 'linear/upload-dataset.html', {'form': form})   
 
 
 def SecondUploadView(request):
@@ -89,7 +88,7 @@ def SecondUploadView(request):
             return HttpResponseRedirect('/prediction')
     else:
         form = UploadDatasetForm()
-    return render(request, 'regressor/second-upload.html', {'form': form})
+    return render(request, 'linear/second-upload.html', {'form': form})
 
 def FeatureVisualizationView(request):
     # on page load
@@ -105,12 +104,14 @@ def FeatureVisualizationView(request):
         request.session["imagePaths"] = image_paths
 
         # prepare variables before loading template
+        image_paths = ["../media/" + path for path in image_paths]
         context = {'image_paths': image_paths, 'target': target}
-        return render(request, 'regressor/feature-visualization.html', context)
-    return render(request, 'regressor/feature-visualization.html')
+
+        return render(request, 'linear/feature-visualization.html', context)
+    return render(request, 'linear/feature-visualization.html')
 
 class ChooseFeaturesView(FormView):
-    template_name = 'regressor/forms/feature_form.html'
+    template_name = 'linear/forms/feature_form.html'
     form_class = FeaturesForm
     success_url = '/specifications'
 
@@ -128,7 +129,7 @@ class ChooseFeaturesView(FormView):
             return HttpResponseRedirect('/specifications')
 
 class ChooseTargetView(FormView):
-    template_name = 'regressor/forms/target_form.html'
+    template_name = 'linear/forms/target_form.html'
     form_class = TargetForm
     success_url = '/visualization'
 
@@ -159,7 +160,7 @@ def ChooseSpecificationsView(request):
             return HttpResponseRedirect('/results') 
     else:
         form = SpecificationsForm(request=request)  # rendering form as usual from features
-        return render(request, 'regressor/forms/specifications_form.html', {'form': form})
+        return render(request, 'linear/forms/specifications_form.html', {'form': form})
 
 def ResultsView(request):
     # on page load
@@ -175,7 +176,7 @@ def ResultsView(request):
             features.append(allFeatures[int(i)])
 
         # get target from location in allTargets
-        if allTargets and request.session.get("target", None):
+        if allTargets and request.session.get("target", None) is not None:
             target = allTargets[int(request.session.get("target", None))]
         title = request.session.get("title", None)
         randomState = request.session.get("randomState", None)
@@ -217,16 +218,20 @@ def ResultsView(request):
 
 
         # TODO: delete all images
-        # imagePaths = request.session["imagePaths"]
-        # for imagePath in imagePaths:
-        #     # if(os.path.relpathexists(imagePath)):
-        #         # print("path exists \n\n")
-        #         # os.remove(imagePath)
-        #     os.remove(imagePath)
+        imagePaths = request.session["imagePaths"]
+        for imagePath in imagePaths:
+            print(f'\n\nimagePath: {imagePath}')
+            # print(f'\n\npath exists? {os.path.relpathexists(imagePath)}')
+            # if(os.path.relpathexists(imagePath)):
+            #     os.remove(imagePath)
+            newPath = settings.MEDIA_ROOT + imagePath
+            print(f'\n\nnewPath: {newPath}')
+            if os.path.exists(newPath):
+                os.remove(newPath)
 
         # prepare variables and return them with template
         context = { 'result': round(result*100, 2) }
-        return render(request, 'regressor/results.html', context)
+        return render(request, 'linear/results.html', context)
 
 def getResults(filePath, features, target, randomState, numFolds):
     ##### data preprocessing #####
@@ -394,24 +399,33 @@ def scatterplotFeatures(request):
     y = data.iloc[:,target]
     y_lbl = allTargets[target]
 
-    # for each feature, plot the function (must be int)
+    # for each feature, plot a target vs feature scatterplot
     for i in range(len(allTargets)):
-        # store all relevant info
+        # get feature and data column from index
         feature = allTargets[i]
         X = data.iloc[:,i]
 
-        # check if numerical
+        # create plot only if numerical and not target variable
         if (np.issubdtype(X.dtype, np.integer) or np.issubdtype(X.dtype, np.floating)) and i != target:
-            plt.scatter(X, y, color="darkgoldenrod")
+
+            # create labeled scatter plot
+            plt.scatter(X, y, color='#a63719')
             plt.title(f'{y_lbl} vs {feature}')
             plt.xlabel(feature)
             plt.ylabel(y_lbl)
             
             # add path to return list and save figure to path
             image_path = f'graphs/{request.user.username}{i}.png'
-            image_paths.append(f'../media/{image_path}')
+            image_paths.append(image_path)
 
             plt.savefig(f'{settings.MEDIA_ROOT}/{image_path}')
             plt.clf()
+
+            # TODO: save image as file instance
+            # graph = Graph(request.user)
+            # graph.image.name = f'{image_path}'
+            # graph.save()
+
+            
     
     return image_paths

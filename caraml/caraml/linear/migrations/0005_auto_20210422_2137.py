@@ -7,7 +7,7 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('regressor', '0004_auto_20210422_2147'),
+        ('linear', '0004_auto_20210422_2147'),
     ]
 
     operations = [

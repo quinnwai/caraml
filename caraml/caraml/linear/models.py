@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.fields.files import ImageField
 from caraml.users.models import User
 from django.utils import timezone
 from django.contrib.postgres.fields import ArrayField
@@ -24,3 +25,7 @@ class Record(models.Model):
 
     def __str__(self):
         return self.title + " (" + self.dateTime.strftime('%B %d, %Y') + ")"
+
+# class Graph(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     image = ImageField(upload_to="graphs")
