@@ -41,9 +41,13 @@ def UploadDatasetView(request):
     if request.method == 'POST':
         form = UploadDatasetForm(request.POST, request.FILES)
 
-        #TODO: check if csv before adding
         if form.is_valid():
-            # make user the currently logged in user
+
+            # basic
+            # if dataset.file.path[-3:] != "csv":
+            #     return HttpResponseRedirect('/upload-dataset')
+
+            # make dataset's author the current user
             dataset = form.save(commit=False)
             dataset.user = request.user
 
@@ -51,14 +55,23 @@ def UploadDatasetView(request):
             dataset.save()
             form.save_m2m()
 
-                # get rid of all session variables
+            # get rid of all session variables
             keys = list(request.session.keys())
             for key in keys:
                 if key[0] != '_':
                     del request.session[key]
 
-            # load in dataset and store all features and dataset title into the session
-            data = pd.read_csv(dataset.file.path)
+            # load in dataset and ensure dataset is readable
+            path = dataset.file.path
+            try:
+                data = pd.read_csv(path)
+            except:
+                if(os.path.exists(path)):
+                    os.remove(path)
+                dataset.delete()
+                return HttpResponseRedirect('/upload-dataset')
+
+            #  store all features and dataset title into the session
             request.session['title'] = dataset.title
             request.session['allTargets'] = list(data.columns)
             return HttpResponseRedirect('/target')
@@ -66,7 +79,7 @@ def UploadDatasetView(request):
         form = UploadDatasetForm()
     return render(request, 'linear/upload-dataset.html', {'form': form})   
 
-
+        
 def SecondUploadView(request):
     if request.method == 'POST':
         form = UploadDatasetForm(request.POST, request.FILES)
@@ -217,15 +230,11 @@ def ResultsView(request):
         dataset.delete()
 
 
-        # TODO: delete all images
+        # delete all images
         imagePaths = request.session["imagePaths"]
         for imagePath in imagePaths:
-            print(f'\n\nimagePath: {imagePath}')
-            # print(f'\n\npath exists? {os.path.relpathexists(imagePath)}')
-            # if(os.path.relpathexists(imagePath)):
-            #     os.remove(imagePath)
-            newPath = settings.MEDIA_ROOT + imagePath
-            print(f'\n\nnewPath: {newPath}')
+            newPath = f'{settings.MEDIA_ROOT}/{imagePath}'
+
             if os.path.exists(newPath):
                 os.remove(newPath)
 
