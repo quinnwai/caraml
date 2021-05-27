@@ -10,7 +10,7 @@
 {% if request.user.is_authenticated %}
   <a href="{% url 'upload-dataset' %}" class="btn btn-primary">Get started</a>
 {% else %}
-<p>But before that, please sign up first!</p>
+<p>But before that, please sign in!</p>
 {% endif %}
 
 {% endblock %}
