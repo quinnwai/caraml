@@ -42,29 +42,13 @@ def UploadDatasetView(request):
         form = UploadDatasetForm(request.POST, request.FILES)
 
         if form.is_valid():
-            dataset = form.save(commit=False)
 
-            # ensure that file is a valid csv with headers before saving
-            # Source: https://stackoverflow.com/questions/2984888/check-if-file-has-a-csv-format-with-python
-            #         and https://gist.github.com/catichenor/f0b2b1367fc51e7b037d4426b0bdd193
-            # csv_fileh = open(dataset.file.path, 'rb')
-
-            # try:
-            #     csv_test_bytes = csv_fileh.read(1024)
-
-            #     # check if file is csv and if it's properly formatted
-            #     dialect = csv.Sniffer().sniff(csv_test_bytes)
-
-            #     # ensure that there are column headers in first row
-            #     if not csv.Sniffer().has_header(csv_test_bytes):
-            #         return HttpResponseRedirect('/upload-dataset')
-
-            #     # Reset read position back to the start of the file
-            #     csv_fileh.seek(0)
-            # except csv.Error:
+            # basic
+            # if dataset.file.path[-3:] != "csv":
             #     return HttpResponseRedirect('/upload-dataset')
 
             # make dataset's author the current user
+            dataset = form.save(commit=False)
             dataset.user = request.user
 
             # save form with new changes
@@ -77,8 +61,17 @@ def UploadDatasetView(request):
                 if key[0] != '_':
                     del request.session[key]
 
-            # load in dataset and store all features and dataset title into the session
-            data = pd.read_csv(dataset.file.path)
+            # load in dataset and ensure dataset is readable
+            path = dataset.file.path
+            try:
+                data = pd.read_csv(path)
+            except:
+                if(os.path.exists(path)):
+                    os.remove(path)
+                dataset.delete()
+                return HttpResponseRedirect('/upload-dataset')
+
+            #  store all features and dataset title into the session
             request.session['title'] = dataset.title
             request.session['allTargets'] = list(data.columns)
             return HttpResponseRedirect('/target')
@@ -86,7 +79,7 @@ def UploadDatasetView(request):
         form = UploadDatasetForm()
     return render(request, 'linear/upload-dataset.html', {'form': form})   
 
-
+        
 def SecondUploadView(request):
     if request.method == 'POST':
         form = UploadDatasetForm(request.POST, request.FILES)
