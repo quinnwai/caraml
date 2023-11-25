@@ -86,12 +86,6 @@ class SpecificationsForm(Form):
             ]
         )
         self.fields["randomState"] = forms.IntegerField(label="Random State")
-        self.fields["nFolds"] = forms.IntegerField(
-            label="Number of Validation Folds",
-            validators=[
-                MinValueValidator(1, message="Value must be at least 1"),
-            ]
-        )
 
         # defined so that crispy forms front-end is simple
         self.helper = FormHelper(self)
