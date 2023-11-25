@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block content %}
 {% block header %}
 <h1>More Specifications</h1>
 <span class="lead">Choose values for the randomization and validation steps</span> 
@@ -15,7 +16,6 @@
 </div>
 {% endblock %}
 
-{% block content %}
 <div class="container">
     {% load crispy_forms_tags %}
     <!-- line below takes all data from FormHelper if FormHelper is named -->

@@ -1,10 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-Results
-{% endblock %}
-
+{% block content %}
 {% block header %}
 <h1>Results</h1>
 
@@ -19,11 +16,10 @@ Results
 </div>
 {% endblock %}
 
-{% block content %}
 <div class="container">
     <!-- use Jinja here to access whatever has been stored  in the views -->
-
-    <h2><strong>Score</strong>: {{ result }}%</h2>
+    <h2><strong>Training Error</strong>: {{ result }}%</h2>
+    <h2><strong>Testing Error</strong>: {{ result }}%</h2>
 </div>
 
 <div>

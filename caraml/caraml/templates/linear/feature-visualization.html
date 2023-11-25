@@ -1,27 +1,29 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block content %}
 {% block header %}
 <h1>Feature Visualization</h1>
-<span class="lead">Here are the plots of {{target | lower}} vs other features</span> 
+<div>
+    <span class="lead">Here are the plots of {{target | lower}} vs other features</span> 
+    <div class="info-tooltip">
+        <img class="info-icon" src={% static 'images/info.png' %} alt="info icon"/>
 
-<div class="info-tooltip">
-    <img class="info-icon" src={% static 'images/info.png' %} alt="info icon"/>
-
-    <p class="tooltiptext">
-        These plots below should help show you the relationships between your
-        features, or independent variables, and the selected target
-    </p>
+        <p class="tooltiptext">
+            These plots below should help show you the relationships between your
+            features, or independent variables, and the selected target
+        </p>
+    </div>
 </div>
 {% endblock header %}
 
-{% block content %}
-{% for path in image_paths %}
-    <img class="mySlides" src={{path}} alt="scatterplot"/> 
-{% endfor %}
-
-<button class="w3-button w3-display-left">&#10094;</button>
-<button class="w3-button w3-display-right">&#10095;</button>
+<div>
+    <button class="w3-button w3-display-left">&#10094;</button>
+    {% for path in image_paths %}
+        <img class="mySlides" src={{path}} alt="scatterplot"/> 
+    {% endfor %}
+    <button class="w3-button w3-display-right">&#10095;</button>
+</div>
 
 <div class="col-sm-12">
     <a class="btn btn-primary" href="{% url 'feature' %}" role="button">Next</a>
