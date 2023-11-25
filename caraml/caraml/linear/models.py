@@ -21,11 +21,8 @@ class Record(models.Model):
     numFolds = models.PositiveIntegerField()
     target = models.CharField(max_length=100)
     features = ArrayField(models.CharField(max_length=100))
-    result = models.DecimalField(decimal_places=2, max_digits=4)
+    training_error = models.DecimalField(decimal_places=2, max_digits=5)
+    testing_error = models.DecimalField(decimal_places=2, max_digits=5)
 
     def __str__(self):
         return self.title + " (" + self.dateTime.strftime('%B %d, %Y') + ")"
-
-# class Graph(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     image = ImageField(upload_to="graphs")
