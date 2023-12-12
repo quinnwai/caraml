@@ -18,14 +18,10 @@ class Record(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     dateTime = models.DateTimeField(default=timezone.now)
     randomState = models.PositiveIntegerField()
-    numFolds = models.PositiveIntegerField()
     target = models.CharField(max_length=100)
     features = ArrayField(models.CharField(max_length=100))
-    result = models.DecimalField(decimal_places=2, max_digits=4)
+    trainError = models.DecimalField(decimal_places=5, max_digits=5)
+    testError = models.DecimalField(decimal_places=5, max_digits=5)
 
     def __str__(self):
         return self.title + " (" + self.dateTime.strftime('%B %d, %Y') + ")"
-
-# class Graph(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     image = ImageField(upload_to="graphs")

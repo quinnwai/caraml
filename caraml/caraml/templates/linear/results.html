@@ -1,10 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-Results
-{% endblock %}
-
+{% block content %}
 {% block header %}
 <h1>Results</h1>
 
@@ -13,17 +10,17 @@ Results
     <img class="info-icon" src={% static 'images/info.png' %}/ alt="info icon">
 
     <p class="tooltiptext">
-        The score is the known as the r-squared value, a percentage representing how well the data was predicted.
-        This value was averaged for the number of folds specified to make sure the results are more reliable
+        The training error is a measure of how well you did in training the data,
+        while the testing error is a measure of how well you did on unseen data.
+        The testing error is your best measure of how well your model generalized in making accurate predictions.
     </p>
 </div>
 {% endblock %}
 
-{% block content %}
 <div class="container">
     <!-- use Jinja here to access whatever has been stored  in the views -->
-
-    <h2><strong>Score</strong>: {{ result }}%</h2>
+    <h2><strong>Training Error</strong>: {{ train_error }}%</h2>
+    <h2><strong>Testing Error</strong>: {{ test_error }}%</h2>
 </div>
 
 <div>

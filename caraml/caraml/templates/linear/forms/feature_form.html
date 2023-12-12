@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-
+{% block content %}
 {% block header %}
 <h1>Feature Selection</h1>
 <span class="lead">Choose the features you want to use to predict your target</span> 
@@ -17,20 +17,21 @@
 </div>
 {% endblock %}
 
-{% block content %}
 <div class="container">
     {% load crispy_forms_tags %}
     <!-- line below takes all data from FormHelper if FormHelper is named -->
     {% crispy form %}
     <input type="checkbox" onClick="toggle(this)" /> Toggle all features 
+    <!-- <button class="btn btn-primary" onClick="toggle(this)" > Toggle all features </button> -->
 </div>
 {% endblock %}
 
 {% block javascript %}
 <script>
     function toggle(source) {
+      console.log("btch")
       checkboxes = document.getElementsByName('features');
-      for (var i = 0, n = checkboxes.length; i < n; i++) {
+      for (let i = 0, n = checkboxes.length; i < n; i++) {
         checkboxes[i].checked = source.checked;
       }
     }

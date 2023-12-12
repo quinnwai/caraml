@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block content %}
 {% block header %}
 <h1>More Specifications</h1>
 <span class="lead">Choose values for the randomization and validation steps</span> 
@@ -9,13 +10,12 @@
     <img class="info-icon" src={% static 'images/info.png' %} alt="info icon"/>
 
     <p class="tooltiptext">
+        The train-test split is a proportion from 0 to 1 of how much data to leave out to test how well your model does with unseen data.
         Using the same number for randomstate allows you to replicate the same randomization and hence the same results.
-        Nfolds determines how many segments to split the dataset into, creating a model where each segment is the test dataset
     </p>
 </div>
 {% endblock %}
 
-{% block content %}
 <div class="container">
     {% load crispy_forms_tags %}
     <!-- line below takes all data from FormHelper if FormHelper is named -->

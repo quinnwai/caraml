@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block content %}
 {% block header %}
 <h1>Target Selection</h1>
 
@@ -15,7 +16,6 @@
 </div>
 {% endblock header %}
 
-{% block content %}
 <div class="container">
     {% load crispy_forms_tags %}
     <!-- line below takes all data from FormHelper if FormHelper is named -->

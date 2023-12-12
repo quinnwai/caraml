@@ -25,55 +25,29 @@
         <div class="accordion-body">
             <table class="table">
                 <tr>
-                    <td>Random State</td>
-                    <td>{{record.randomState}} </td>
-                </tr>
-                    
-                    <td>Number of Folds</td>
-                    <td>{{record.numFolds}} </td>
-                </tr>
-                <tr>
                     <td>Features</td>
-                    <td>{{record.features|join:", " }} </td>
+                    <td>{{record.features | join:", " }} </td>
                 </tr>
                 <tr>
                     <td>Target</td>
                     <td>{{record.target}} </td>
                 </tr>    
                 <tr>
-                    <td>Accuracy</td>
-                    <td>{{record.result}}% </td>
+                    <td>Random State</td>
+                    <td>{{record.randomState}} </td>
+                </tr>
+                    <td>Training Error</td>
+                    <td>{{record.trainError}} </td>
+                </tr>
+                </tr>
+                    <td>Test Error</td>
+                    <td>{{record.testError}} </td>
                 </tr>
         </table>
         </div>
     </div>
     {% endfor %}
 </div>
-
-
-    <!-- <table class="table" id="drug-list-table">
-        <tr>
-            <th>Title</th>
-            <th>Date and Time</th>
-            <th>Random State</th>
-            <th>Number of folds</th>
-            <th>Features</th>
-            <th>Target </th>
-            <th>Result</th>
-            <th></th>
-        </tr>
-    {%for record in object_list%}
-<tr>
-    <td>{{record.title}}</td>
-    <td></td>
-    <td>}</td>
-    <td></td>
-    <td></td>
-    <td>{{record.target}}</td>
-    <td>{{record.result}}%</td>
-</tr>
-    {% endfor %}
-</table> -->
 {%else%}
 <div>
     <h2> Sorry, no records to show.

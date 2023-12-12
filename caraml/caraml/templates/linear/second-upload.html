@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block content %}
 {% block header %}
 <h1>Upload Dataset</h1>
 <span class="lead">Upload the unlabeled dataset you want predictions for</span>
@@ -14,7 +15,6 @@
 </div>
 {% endblock header %}
 
-{% block content %}
 <div class="container">
     {% load crispy_forms_tags %}
     <!-- line below takes all data from FormHelper if FormHelper is named -->
